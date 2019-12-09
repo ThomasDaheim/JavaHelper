@@ -1,0 +1,134 @@
+// support for javafx11 - see https://openjfx.io/openjfx-docs/#gradle
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'com.google.osdetector'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+// see https://github.com/kelemen/netbeans-gradle-project/issues/179
+apply plugin: 'idea'
+idea.module.downloadJavadoc = true
+
+ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+// NetBeans will automatically add "run" and "debug" tasks relying on the
+// "mainClass" property. You may however define the property prior executing
+// tasks by passing a "-PmainClass=<QUALIFIED_CLASS_NAME>" argument.
+//
+// Note however, that you may define your own "run" and "debug" task if you
+// prefer. In this case NetBeans will not add these tasks but you may rely on
+// your own implementation.
+if (!hasProperty('mainClass')) {
+    ext.mainClass = 'tf.helper.AboutMenu'
+}
+mainClassName = 'tf.helper.AboutMenu'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+    // You may define additional repositories, or even remove "mavenCentral()".
+    // Read more about repositories here:
+    //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
+}
+
+dependencies {
+    // JavaFX11 explicit dependencies
+    compile "org.openjfx:javafx-base:11.0.2:$platform"
+    compile "org.openjfx:javafx-graphics:11.0.2:$platform"
+    compile "org.openjfx:javafx-controls:11.0.2:$platform"
+    compile "org.openjfx:javafx-fxml:11.0.2:$platform"
+    compile "org.openjfx:javafx-swing:11.0.2:$platform"
+    compile "org.openjfx:javafx-web:11.0.2:$platform"
+    compile "org.openjfx:javafx-media:11.0.2:$platform"
+
+    compile 'org.apache.commons:commons-lang3:3.9'
+   
+    // You can read more about how to add dependency here:
+    //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
+    testCompile group: 'junit', name: 'junit', version: '4.10'
+}
+
+compileJava {
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'javafx.controls,javafx.graphics,javafx.base,javafx.fxml,javafx.web,javafx.swing,javafx.media',
+                '-Xlint:unchecked',
+                '-Xlint:deprecation',
+        ]
+    }
+}
+
+// see https://github.com/kelemen/netbeans-gradle-project/issues/403 on how to extend gradle tasks
+def newArgs = [ '--add-modules', 'javafx.controls,javafx.graphics,javafx.base,javafx.fxml,javafx.web,javafx.swing,javafx.media',
+                // various exports needed at run time - see https://stackoverflow.com/a/52142071
+                '--add-exports', 'javafx.graphics/com.sun.javafx.util=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.reflect=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.beans=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.logging=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.runtime=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.collections=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.event=ALL-UNNAMED',
+                '--add-exports', 'javafx.graphics/com.sun.prism=ALL-UNNAMED',
+                '--add-exports', 'javafx.graphics/com.sun.javafx.sg.prism=ALL-UNNAMED',
+                '--add-exports', 'javafx.graphics/com.sun.javafx.scene=ALL-UNNAMED',
+                '--add-exports', 'javafx.media/com.sun.media.jfxmedia=ALL-UNNAMED',
+                '--add-exports', 'javafx.media/com.sun.media.jfxmedia.events=ALL-UNNAMED',
+                '--add-exports', 'javafx.controls/com.sun.javafx.scene.control=ALL-UNNAMED',
+                '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
+                '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.inputmap=ALL-UNNAMED',
+                '--add-exports', 'javafx.controls/com.sun.javafx.charts=ALL-UNNAMED',
+                '--add-exports', 'javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED',
+    ]
+    
+// extend Netbeans Gradle "Run" task
+run {
+    doFirst {
+        jvmArgs = jvmArgs.plus(['--module-path', classpath.asPath,])
+        jvmArgs = jvmArgs.plus(newArgs)
+        jvmArgs '-Xss80M'
+    }
+}
+
+// extend Netbeans Gradle "Debug" task
+task(debug, dependsOn: 'classes', type: JavaExec) {
+    doFirst {
+        main = 'tf.gpx.edit.main.GPXEditorManager'
+        classpath = sourceSets.main.runtimeClasspath
+        jvmArgs = jvmArgs.plus([
+                '--module-path', classpath.asPath,
+                "-Xdebug",
+                "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005",
+        ])
+        jvmArgs = jvmArgs.plus(newArgs)
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+            'Built-By'       : System.properties['user.name'],
+            'Build-Timestamp': new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").format(new Date()),
+            'Created-By'     : "Gradle ${gradle.gradleVersion}",
+            'Build-JDK'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
+            'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
+            'App-Name'       : "JavaHelper",
+            'App-Version'    : "1.0",
+            'App-URL'        : "https://github.com/ThomasDaheim/JavaHelper"
+        )
+    }
+}
+
+build.finalizedBy(install)
