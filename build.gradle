@@ -33,6 +33,8 @@ if (!hasProperty('mainClass')) {
     ext.mainClass = 'tf.helper.AboutMenu'
 }
 mainClassName = 'tf.helper.AboutMenu'
+group='JavaHelper'
+version='1.0'
 
 repositories {
     mavenLocal()
@@ -53,6 +55,7 @@ dependencies {
     compile "org.openjfx:javafx-web:11.0.2:$platform"
     compile "org.openjfx:javafx-media:11.0.2:$platform"
 
+    compile 'commons-io:commons-io:2.6'
     compile 'org.apache.commons:commons-lang3:3.9'
    
     // You can read more about how to add dependency here:
@@ -124,8 +127,8 @@ jar {
             'Created-By'     : "Gradle ${gradle.gradleVersion}",
             'Build-JDK'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
             'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
-            'App-Name'       : "JavaHelper",
-            'App-Version'    : "1.0",
+            'App-Name'       : group,
+            'App-Version'    : version,
             'App-URL'        : "https://github.com/ThomasDaheim/JavaHelper"
         )
     }
