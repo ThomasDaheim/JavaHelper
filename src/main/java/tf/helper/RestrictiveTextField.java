@@ -88,7 +88,9 @@ public class RestrictiveTextField extends TextField {
  
                 //if (restrict.get() != null && !restrict.get().equals("") && !s1.matches(restrict.get() + "*")) {
                 // TFE, 20180602: use pattern
-                if (restrict.get() != null && !restrict.get().isEmpty() && !restrictPattern.matcher(s1).matches()) {
+                // TFE, 20200120: lookingAt() to support partial match e.g. during typing of values
+                if (restrict.get() != null && !restrict.get().isEmpty() && 
+                        !(restrictPattern.matcher(s1).matches() || restrictPattern.matcher(s1).lookingAt())) {
                     ignore = true;
                     setText(s);
                     ignore = false;
