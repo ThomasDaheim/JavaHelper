@@ -26,9 +26,14 @@
 package tf.helper;
 
 import java.util.Optional;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyEvent;
+import javafx.stage.Window;
 
 /**
  *
@@ -38,7 +43,7 @@ public class ShowAlerts {
     // this is a singleton for everyones use
     // http://www.javaworld.com/article/2073352/core-java/simply-singleton.html
     private final static ShowAlerts INSTANCE = new ShowAlerts();
-
+    
     private ShowAlerts() {
         // Exists only to defeat instantiation.
     }
@@ -52,6 +57,7 @@ public class ShowAlerts {
         Alert result;
         
         result = new Alert(alertType);
+        
         if (title != null) {
             result.setTitle(title);
         }
@@ -73,6 +79,31 @@ public class ShowAlerts {
         // add optional buttons
         if (buttons.length > 0) {
             result.getButtonTypes().setAll(buttons);
+            
+            // check if any button is of type CANCEL_CLOSE
+            // otherwise: react to click on "X" ourselves
+            // https://stackoverflow.com/a/52472182
+            boolean hasCancelClose = false;
+            for (ButtonType button : buttons) {
+                if (ButtonBar.ButtonData.CANCEL_CLOSE.equals(button.getButtonData())) {
+                    hasCancelClose = true;
+                    break;
+                }
+            }
+            if (!hasCancelClose) {
+                // check for click on "X"
+                final Window window = result.getDialogPane().getScene().getWindow();
+                window.setOnCloseRequest(e -> result.hide());
+                
+                // check for ESCAPE
+                result.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent evt) -> {
+                    if (evt.getCode().equals(UsefulKeyCodes.ESCAPE.getKeyCodeCombination().getCode())) {
+                        // TODO: not working to hide result from within here
+                        // prohibited by FXDialog source :-(
+                        result.hide();
+                    }
+                });
+            }
         }
         
         // get button pressed
