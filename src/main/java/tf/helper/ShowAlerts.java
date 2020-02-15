@@ -34,6 +34,7 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -98,9 +99,16 @@ public class ShowAlerts {
                 // check for ESCAPE
                 result.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent evt) -> {
                     if (evt.getCode().equals(UsefulKeyCodes.ESCAPE.getKeyCodeCombination().getCode())) {
-                        // TODO: not working to hide result from within here
+                        // not working to hide result from within here
                         // prohibited by FXDialog source :-(
-                        result.hide();
+//                        result.hide();
+                        
+                        window.fireEvent(
+                            new WindowEvent(
+                                window,
+                                WindowEvent.WINDOW_CLOSE_REQUEST
+                            )
+                        );
                     }
                 });
             }
