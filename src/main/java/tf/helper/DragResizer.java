@@ -122,7 +122,12 @@ public class DragResizer {
     protected void mouseOver(MouseEvent event) {
         if(isInDraggableZone(event) || dragging) {
 //            System.out.println("inBottom: " + inBottom + ", " + "inTop: " + inTop + ", " + "inLeft: " + inLeft + ", " + "inRight: " + inRight);
-            region.setCursor(Cursor.S_RESIZE);
+            // cursor change is only visible of set to NONE on any overlapping childs
+            if (inBottom || inTop) {
+                region.setCursor(Cursor.V_RESIZE);
+            } else {
+                region.setCursor(Cursor.W_RESIZE);
+            }
         }
         else {
             region.setCursor(Cursor.DEFAULT);
