@@ -30,11 +30,11 @@ ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'wi
 // prefer. In this case NetBeans will not add these tasks but you may rely on
 // your own implementation.
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'tf.helper.AboutMenu'
+    ext.mainClass = 'tf.helper.test.TestDragResizer'
 }
-mainClassName = 'tf.helper.AboutMenu'
+mainClassName = 'tf.helper.test.TestDragResizer'
 group='JavaHelper'
-version='1.0'
+version='1.1'
 
 repositories {
     mavenLocal()
@@ -58,9 +58,9 @@ dependencies {
     compile 'commons-io:commons-io:2.6'
     compile 'org.apache.commons:commons-lang3:3.9'
    
-    // You can read more about how to add dependency here:
-    //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:how_to_declare_your_dependencies
-    testCompile group: 'junit', name: 'junit', version: '4.10'
+    testCompile "org.testfx:testfx-junit:4.0.+"
+    testCompile "org.testfx:testfx-core:4.0.+"
+    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.5.1'
 }
 
 compileJava {

@@ -123,10 +123,20 @@ public class DragResizer {
         if(isInDraggableZone(event) || dragging) {
 //            System.out.println("inBottom: " + inBottom + ", " + "inTop: " + inTop + ", " + "inLeft: " + inLeft + ", " + "inRight: " + inRight);
             // cursor change is only visible of set to NONE on any overlapping childs
-            if (inBottom || inTop) {
-                region.setCursor(Cursor.V_RESIZE);
+            if (inBottom && inLeft) {
+                region.setCursor(Cursor.NE_RESIZE);
+            } else if (inBottom && inRight) {
+                region.setCursor(Cursor.NW_RESIZE);
+            } else if (inTop && inLeft) {
+                region.setCursor(Cursor.SE_RESIZE);
+            } else if (inTop && inRight) {
+                region.setCursor(Cursor.SW_RESIZE);
             } else {
-                region.setCursor(Cursor.W_RESIZE);
+                if (inBottom || inTop) {
+                    region.setCursor(Cursor.V_RESIZE);
+                } else {
+                    region.setCursor(Cursor.W_RESIZE);
+                }
             }
         }
         else {
@@ -156,9 +166,9 @@ public class DragResizer {
             double mousex = event.getX();
             double newWidth = region.getMinWidth();
             if (inLeft) {
-                newWidth += (mousex - startX);
-            } else {
                 newWidth -= (mousex - startX);
+            } else {
+                newWidth += (mousex - startX);
                 // right: startX is max value - we need to recalc difference to previous
                 startX = mousex;
             }
