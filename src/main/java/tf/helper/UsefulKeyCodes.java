@@ -35,6 +35,7 @@ import javafx.scene.input.KeyEvent;
  * @author thomas
  */
 public enum UsefulKeyCodes {
+    CNTRL_A(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_ANY)),
     CNTRL_C(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY)),
     CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY)),
     SHIFT_CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY, KeyCombination.SHIFT_DOWN)),

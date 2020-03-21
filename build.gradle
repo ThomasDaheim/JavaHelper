@@ -33,7 +33,7 @@ if (!hasProperty('mainClass')) {
     ext.mainClass = 'tf.helper.test.TestDragResizer'
 }
 mainClassName = 'tf.helper.test.TestDragResizer'
-group='JavaHelper'
+group='tf.JavaHelper'
 version='1.1'
 
 repositories {
