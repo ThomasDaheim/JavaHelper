@@ -34,7 +34,7 @@ if (!hasProperty('mainClass')) {
 }
 mainClassName = 'tf.helper.test.TestDragResizer'
 group='tf.JavaHelper'
-version='1.1'
+version='1.2'
 
 repositories {
     mavenLocal()
@@ -46,14 +46,15 @@ repositories {
 }
 
 dependencies {
-    // JavaFX11 explicit dependencies
-    compile "org.openjfx:javafx-base:11.0.2:$platform"
-    compile "org.openjfx:javafx-graphics:11.0.2:$platform"
-    compile "org.openjfx:javafx-controls:11.0.2:$platform"
-    compile "org.openjfx:javafx-fxml:11.0.2:$platform"
-    compile "org.openjfx:javafx-swing:11.0.2:$platform"
-    compile "org.openjfx:javafx-web:11.0.2:$platform"
-    compile "org.openjfx:javafx-media:11.0.2:$platform"
+//    def javafx_version='11.0.2'
+    def javafx_version='14'
+    compile "org.openjfx:javafx-base:$javafx_version:$platform"
+    compile "org.openjfx:javafx-graphics:$javafx_version:$platform"
+    compile "org.openjfx:javafx-controls:$javafx_version:$platform"
+    compile "org.openjfx:javafx-fxml:$javafx_version:$platform"
+    compile "org.openjfx:javafx-swing:$javafx_version:$platform"
+    compile "org.openjfx:javafx-web:$javafx_version:$platform"
+    compile "org.openjfx:javafx-media:$javafx_version:$platform"
 
     compile 'commons-io:commons-io:2.6'
     compile 'org.apache.commons:commons-lang3:3.9'

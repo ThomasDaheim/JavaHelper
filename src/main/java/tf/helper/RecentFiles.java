@@ -27,6 +27,7 @@ package tf.helper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -74,11 +75,13 @@ public class RecentFiles {
     private void saveRecentFiles() {
         // store all filenames
         List<String> files = getRecentFiles();
+        // TFE; 2020402: double reverse required: "add" in loadAndCheckRecentFiles() places items in front of others...
+        Collections.reverse(files);
         
         int count = 0;
         for (String file : files) {
             count++;
-            myPreferences.put(getPrevName(count), file);
+            myPreferences.put(getPreferenceName(count), file);
         }
         
         // store file count
@@ -89,11 +92,10 @@ public class RecentFiles {
         recentFiles.clear();
         
         try {
-            final int fileCount = Integer.valueOf(
-                    myPreferences.get(RECENTFILENAME_COUNT, "0"));
+            final int fileCount = Integer.valueOf(myPreferences.get(RECENTFILENAME_COUNT, "0"));
 
             for (int count = 1; count <= fileCount; count++) {
-                final String fileName = myPreferences.get(getPrevName(count), NORECENTFILENAME);
+                final String fileName = myPreferences.get(getPreferenceName(count), NORECENTFILENAME);
 
                 if (NORECENTFILENAME.equals(fileName)) {
                     // something went wrong... lets not worry about it
@@ -110,7 +112,7 @@ public class RecentFiles {
         }
     }
     
-    private String getPrevName(final int count) {
+    private String getPreferenceName(final int count) {
         return RECENTFILENAME + String.valueOf(count);
     }
     
