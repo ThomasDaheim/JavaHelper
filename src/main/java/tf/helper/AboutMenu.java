@@ -29,9 +29,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.jar.Attributes;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.HostServices;
@@ -92,8 +89,6 @@ public class AboutMenu {
     private static final String MENU_ICON = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiChwRMw7JEGHfAAAAqklEQVQoz6XQr06CYRgF8B9/3GjQbejGCEaKSKER7AYj3ABjcCNegndhsBBIRBLJRnAjfI3hY/kUZe+bOOU5O+fsbOfhHI/WVm5k0PAphHk+UAhfOrK4t3DrEjQM1XLmtVeFME2ZFRN7IYTxSa7+splnLyXfpBpqeBJC4SrVcMQALB1SAXgA77kNLUchDLV1U4F+uWFpZ/Qj1v8EmuUNPR+phjtbbyb///gN164oLmafnJcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTgtMTAtMjhUMTc6NTE6MTQrMDE6MDD/wi67AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE4LTEwLTI4VDE3OjUxOjE0KzAxOjAwjp+WBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=";
     private final Image menuIcon;
     
-    private static final String UNKNOWN = "unknown";
-    
     private AboutMenu() {
         super();
         
@@ -146,37 +141,16 @@ public class AboutMenu {
     }
     
     private Alert createAboutAlert(final Class<?> klass, final Window window, final String inAppName, final String inAppVersion, final String inAppURL) {
-        String appName = inAppName;
-        String appVersion = inAppVersion;
-        String appURL = inAppURL;
-
-        String builtBy = UNKNOWN;
-        String buildTimestamp = UNKNOWN;
-        String createdBy = UNKNOWN;
-        String buildJdk = UNKNOWN;
-        String buildOS = UNKNOWN;
+        AppInfo.getInstance().initAppInfo(klass, inAppName, inAppVersion, inAppURL);
         
-        // TFE, 20190823: try to read data from manifest file
-        try {
-	    final JarFile jar = JarFileLoader.jarFileOf(klass);
-//            System.out.println("jar: " + jar);
-            if (jar != null) {
-                final Manifest manifest = jar.getManifest();
-                final Attributes manifestContents = manifest.getMainAttributes();
-
-                appName = setFromAttributesIfNotNull(appName, manifestContents, "App-Name");
-                appVersion = setFromAttributesIfNotNull(appVersion, manifestContents, "App-Version");
-                appURL = setFromAttributesIfNotNull(appName, manifestContents, "App-URL");
-
-                builtBy = setFromAttributesIfNotNull(builtBy, manifestContents, "Built-By");
-                buildTimestamp = setFromAttributesIfNotNull(buildTimestamp, manifestContents, "Build-Timestamp");
-                createdBy = setFromAttributesIfNotNull(createdBy, manifestContents, "Created-By");
-                buildJdk = setFromAttributesIfNotNull(buildJdk, manifestContents, "Build-Jdk");
-                buildOS = setFromAttributesIfNotNull(buildOS, manifestContents, "Build-OS");
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(AboutMenu.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        final String appName = AppInfo.getInstance().getAppName();
+        final String appVersion = AppInfo.getInstance().getAppVersion();
+        final String appURL = AppInfo.getInstance().getAppURL();
+        final String builtBy = AppInfo.getInstance().getBuiltBy();
+        final String buildTimestamp = AppInfo.getInstance().getBuildTimestamp();
+        final String createdBy = AppInfo.getInstance().getCreatedBy();
+        final String buildJdk = AppInfo.getInstance().getBuildJdk();
+        final String buildOS = AppInfo.getInstance().getBuildOS();
         
         // create alert from data with OK button
         final Alert alert = new Alert(AlertType.INFORMATION);
@@ -229,16 +203,6 @@ public class AboutMenu {
         alert.getDialogPane().contentProperty().set(pane);
         
         return alert;
-    }
-    
-    private static String setFromAttributesIfNotNull(final String defaultValue, final Attributes manifestContents, final String attrName) {
-        String result = manifestContents.getValue(attrName);
-        
-        if (result == null) {
-            result = defaultValue;
-        }
-        
-        return result;
     }
     
     private static BufferedImage decodeToImage(String imageString) {
