@@ -25,22 +25,16 @@
  */
 package tf.helper;
 
-import com.sun.javafx.scene.SceneHelper;
-import com.sun.javafx.scene.input.DragboardHelper;
 import com.sun.javafx.tk.TKClipboard;
-import com.sun.javafx.tk.TKScene;
 import com.sun.javafx.tk.Toolkit;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.DataFormat;
-import javafx.scene.input.Dragboard;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 import javafx.util.Pair;
 
 /**
@@ -100,10 +94,37 @@ public class AppClipboard {
             return contentPut;
         }
     }
+
+    // Puts content onto the clipboard.
+    @SuppressWarnings("unchecked")
+    public boolean setContent(DataFormat format, Object content) {
+        if (content == null) {
+            contentPut = false;
+            peer.putContent(new Pair[0]);
+            return true;
+        } else {
+            Pair<DataFormat, Object>[] data = new Pair[1];
+            data[0] = new Pair<>(format, content);
+            contentPut = peer.putContent(data);
+            return contentPut;
+        }
+    }
     
     // Returns the content stored in this clipboard of the given type, or null if there is no content with this type.
     public Object getContent(DataFormat dataFormat) {
         return peer.getContent(dataFormat);
+    }
+
+    // Returns the content stored in this clipboard of the given type, or null if there is no content with this type.
+    public Map<DataFormat, Object> getContentAsMap(DataFormat dataFormat) {
+        final Map<DataFormat, Object> result = new HashMap<>();
+
+        final Object content = peer.getContent(dataFormat);
+        if (content != null) {
+            result.put(dataFormat, content);
+        }
+        
+        return result;
     }
 
     // Gets the set of DataFormat types on this Clipboard instance which have associated data registered on the clipboard.

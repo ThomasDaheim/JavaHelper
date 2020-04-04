@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javafx.scene.image.Image;
 import javafx.scene.input.DataFormat;
 import org.assertj.core.util.Files;
 import org.junit.After;
@@ -158,5 +157,20 @@ public class TestAppClipboard {
         Assert.assertFalse(AppClipboard.getInstance().hasString());
         Assert.assertFalse(AppClipboard.getInstance().hasUrl());
         Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        // single add
+        AppClipboard.getInstance().setContent(DataFormat.PLAIN_TEXT, testString1);
+        
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasFiles());
+        Assert.assertFalse(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getString());
+        
     }
 }
