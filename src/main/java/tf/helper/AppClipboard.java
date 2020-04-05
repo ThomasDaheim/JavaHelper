@@ -26,15 +26,19 @@
 package tf.helper;
 
 import com.sun.javafx.tk.TKClipboard;
-import com.sun.javafx.tk.Toolkit;
 import java.io.File;
+import java.security.AccessControlContext;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
+import javafx.scene.input.TransferMode;
 import javafx.util.Pair;
 
 /**
@@ -43,14 +47,15 @@ import javafx.util.Pair;
  *   a) all methods in Clipboard are marked final
  *   b) implementing TKClipboard would required implementing drag & drop support as well
  *   c) QuantumClipboard is final & not public
- * So code creates a TKClipboard internally and delegates all calls to it = don't use system clipboard
+ *   d) LocalClipboard is final
+ * So duplicate code from LocalClipboard = don't use system clipboard
  * @author thomas
  */
-public class AppClipboard {
+public class AppClipboard implements TKClipboard {
     private final static AppClipboard INSTANCE = new AppClipboard();
-
-    // the actual worker here :-)
-    private static TKClipboard peer;
+    
+    private final Map<DataFormat, Object> values = new HashMap<>();
+    
     /**
      * Whether user has put something on this clipboard. Needed for DnD.
      */
@@ -61,10 +66,6 @@ public class AppClipboard {
     }
     
     public static AppClipboard getInstance() {
-        if (peer == null) {
-            peer = Toolkit.getToolkit().createLocalClipboard();
-        }
-
         return INSTANCE;
     }
     
@@ -72,17 +73,62 @@ public class AppClipboard {
         return contentPut;
     }
     
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean putContent(Pair<DataFormat, Object>... content) {
+        return putContent(true, content);
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean putContent(final boolean doClear, final Pair<DataFormat, Object>... content) {
+        for (final Pair<DataFormat, Object> pair: content) {
+            if (pair.getKey() == null) {
+                throw new NullPointerException("AppClipboard.putContent: null data format");
+            }
+            if (pair.getValue() == null) {
+                throw new NullPointerException("AppClipboard.putContent: null data");
+            }
+        }
+
+        // all OK, replace clipboard content
+        if (doClear) {
+            contentPut = false;
+            values.clear();
+        }
+        for (final Pair<DataFormat, Object> pair: content) {
+            contentPut = true;
+            values.put(pair.getKey(), pair.getValue());
+        }
+
+        return contentPut;
+    }
+    
     // Clears the clipboard of any and all content.
     public void clear() {
         setContent(null);
+    }
+    
+    public void clearContent(DataFormat dataFormat) {
+        values.remove(dataFormat);
     }
 
     // Puts content onto the clipboard.
     @SuppressWarnings("unchecked")
     public boolean setContent(Map<DataFormat, Object> content) {
+        return newContent(true, content);
+    }
+
+    // Puts content onto the clipboard.
+    @SuppressWarnings("unchecked")
+    public boolean addContent(Map<DataFormat, Object> content) {
+        return newContent(false, content);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private boolean newContent(final boolean doClear, Map<DataFormat, Object> content) {
+        // slightly different than the code in Clipboard: we don't have to fiddle around here with contentPut
         if (content == null) {
-            contentPut = false;
-            peer.putContent(new Pair[0]);
+            putContent(doClear, new Pair[0]);
             return true;
         } else {
             Pair<DataFormat, Object>[] data = new Pair[content.size()];
@@ -90,115 +136,163 @@ public class AppClipboard {
             for (Map.Entry<DataFormat, Object> entry : content.entrySet()) {
                 data[index++] = new Pair<>(entry.getKey(), entry.getValue());
             }
-            contentPut = peer.putContent(data);
-            return contentPut;
+            return putContent(doClear, data);
         }
     }
 
     // Puts content onto the clipboard.
     @SuppressWarnings("unchecked")
     public boolean setContent(DataFormat format, Object content) {
+        return newContent(true, format, content);
+    }
+    
+    // Adds content onto the clipboard.
+    @SuppressWarnings("unchecked")
+    public boolean addContent(DataFormat format, Object content) {
+        return newContent(false, format, content);
+    }
+    
+    @SuppressWarnings("unchecked")
+    private boolean newContent(final boolean doClear, DataFormat format, Object content) {
+        // slightly different than the code in Clipboard: we don't have to fiddle around here with contentPut
         if (content == null) {
-            contentPut = false;
-            peer.putContent(new Pair[0]);
+            putContent(doClear, new Pair[0]);
             return true;
         } else {
             Pair<DataFormat, Object>[] data = new Pair[1];
             data[0] = new Pair<>(format, content);
-            contentPut = peer.putContent(data);
-            return contentPut;
+            return putContent(doClear, data);
         }
     }
     
     // Returns the content stored in this clipboard of the given type, or null if there is no content with this type.
+    @Override
     public Object getContent(DataFormat dataFormat) {
-        return peer.getContent(dataFormat);
+        return values.get(dataFormat);
     }
-
-    // Returns the content stored in this clipboard of the given type, or null if there is no content with this type.
-    public Map<DataFormat, Object> getContentAsMap(DataFormat dataFormat) {
-        final Map<DataFormat, Object> result = new HashMap<>();
-
-        final Object content = peer.getContent(dataFormat);
-        if (content != null) {
-            result.put(dataFormat, content);
-        }
+    
+    public ClipboardContent getAsClipboardContent(DataFormat dataFormat) {
+        final ClipboardContent result = new ClipboardContent();
+        
+        result.put(dataFormat, getContent(dataFormat));
         
         return result;
     }
 
     // Gets the set of DataFormat types on this Clipboard instance which have associated data registered on the clipboard.
+    @Override
     public Set<DataFormat> getContentTypes() {
-        return peer.getContentTypes();
+        return Collections.unmodifiableSet(new HashSet<>(values.keySet()));
     }
 
     // Tests whether there is any content on this clipboard of the given DataFormat type.
+    @Override
     public boolean hasContent(DataFormat dataFormat) {
-        return peer.hasContent(dataFormat);
+        return values.containsKey(dataFormat);
     }
 
     //Gets whether an List of Files (DataFormat.FILES) has been registered on this Clipboard.
     public boolean hasFiles() {
-        return peer.hasContent(DataFormat.FILES);
+        return hasContent(DataFormat.FILES);
     }
 
     // Gets the List of Files from the clipboard which had previously been registered.
     @SuppressWarnings("unchecked")
     public List<File> getFiles() {
-        return (List<File>) peer.getContent(DataFormat.FILES);
+        return (List<File>) getContent(DataFormat.FILES);
     }
 
     // Gets whether an HTML text String (DataFormat.HTML) has been registered on this Clipboard.
     public boolean hasHtml() {
-        return peer.hasContent(DataFormat.HTML);
+        return hasContent(DataFormat.HTML);
     }
 
     // Gets the HTML text String from the clipboard which had previously been registered.
     public String getHtml() {
-        return (String) peer.getContent(DataFormat.HTML);
+        return (String) getContent(DataFormat.HTML);
     }
 
     // Gets whether an Image (DataFormat.IMAGE) has been registered on this Clipboard.
     public boolean hasImage() {
-        return peer.hasContent(DataFormat.IMAGE);
+        return hasContent(DataFormat.IMAGE);
     }
 
     // Gets the Image from the clipboard which had previously been registered.
     public Image getImage() {
-        return (Image) peer.getContent(DataFormat.IMAGE);
+        return (Image) getContent(DataFormat.IMAGE);
     }
 
     // Gets whether an RTF String (DataFormat.RTF) has been registered on this Clipboard.
     public boolean hasRtf() {
-        return peer.hasContent(DataFormat.RTF);
+        return hasContent(DataFormat.RTF);
     }
 
     // Gets the RTF text String from the clipboard which had previously been registered.
     public String getRtf() {
-        return (String) peer.getContent(DataFormat.RTF);
+        return (String) getContent(DataFormat.RTF);
     }
 
     // Gets whether a plain text String (DataFormat.PLAIN_TEXT) has been registered on this Clipboard.
     public boolean hasString() {
-        return peer.hasContent(DataFormat.PLAIN_TEXT);
+        return hasContent(DataFormat.PLAIN_TEXT);
     }
 
     // Gets the plain text String from the clipboard which had previously been registered.
     public String getString() {
-        return (String) peer.getContent(DataFormat.PLAIN_TEXT);
+        return (String) getContent(DataFormat.PLAIN_TEXT);
     }
 
     // Gets whether a url String (DataFormat.URL) has been registered on this Clipboard.
     public boolean hasUrl() {
-        return peer.hasContent(DataFormat.URL);
+        return hasContent(DataFormat.URL);
     }
     // Gets the URL String from the clipboard which had previously been registered.
     public String getUrl() {
-        return (String) peer.getContent(DataFormat.URL);
+        return (String) getContent(DataFormat.URL);
     }
 
     // Gets the current system clipboard, through which data can be stored and retrieved.
     public static Clipboard getSystemClipboard() {
         return Clipboard.getSystemClipboard();
+    }
+
+    @Override
+    public void setSecurityContext(final AccessControlContext ctx) {
+        // ctx not needed
+    }
+    
+    @Override
+    public Set<TransferMode> getTransferModes() {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void setDragView(final Image image) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void setDragViewOffsetX(final double offsetX) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public void setDragViewOffsetY(final double offsetY) {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public Image getDragView() {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public double getDragViewOffsetX() {
+        throw new IllegalStateException();
+    }
+
+    @Override
+    public double getDragViewOffsetY() {
+        throw new IllegalStateException();
     }
 }

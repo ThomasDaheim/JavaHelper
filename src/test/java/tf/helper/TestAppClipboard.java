@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import org.assertj.core.util.Files;
 import org.junit.After;
@@ -83,11 +84,12 @@ public class TestAppClipboard {
 
     @Test
     public void testAppClipboard() {
-        // start with nothing :-)
+        // 1) start with nothing :-)
         final Map<DataFormat, Object> content = new HashMap<>();
         
         AppClipboard.getInstance().setContent(content);
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        // nothing has been put - only an empty map passed!
+        Assert.assertFalse(AppClipboard.getInstance().contentPut());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -96,7 +98,7 @@ public class TestAppClipboard {
         Assert.assertFalse(AppClipboard.getInstance().hasUrl());
         Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
 
-        // get better
+        // 2) get better
         content.put(DataFormat.FILES, testFiles);
         content.put(DataFormat.HTML, testString1);
         content.put(DataFormat.IMAGE, testImage);
@@ -124,7 +126,7 @@ public class TestAppClipboard {
         Assert.assertEquals(testString1, AppClipboard.getInstance().getUrl());
         Assert.assertEquals(testString1, AppClipboard.getInstance().getContent(TEST_APPCLIPBOARD));
         
-        // change only one
+        // 3) change only one
         content.put(DataFormat.PLAIN_TEXT, testString2);
         
         AppClipboard.getInstance().setContent(content);
@@ -146,7 +148,7 @@ public class TestAppClipboard {
         Assert.assertEquals(testString1, AppClipboard.getInstance().getUrl());
         Assert.assertEquals(testString1, AppClipboard.getInstance().getContent(TEST_APPCLIPBOARD));
         
-        // and not throw away everything
+        // 4) and not throw away everything
         AppClipboard.getInstance().clear();
         
         Assert.assertFalse(AppClipboard.getInstance().contentPut());
@@ -171,6 +173,203 @@ public class TestAppClipboard {
         Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
 
         Assert.assertEquals(testString1, AppClipboard.getInstance().getString());
+
+        final ClipboardContent testContent = AppClipboard.getInstance().getAsClipboardContent(DataFormat.PLAIN_TEXT);
+        Assert.assertEquals(testString1, testContent.getString());
+    }
+
+    @Test
+    public void testSetAddClipboardMap() {
+        final Map<DataFormat, Object> content = new HashMap<>();
+
+        // 1) set only one
+        content.put(DataFormat.FILES, testFiles);
+        AppClipboard.getInstance().setContent(content);
+        // now we should have files ONLY
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertFalse(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertFalse(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
         
+        // 2) set another one only
+        content.clear();
+        content.put(DataFormat.HTML, testString1);
+        AppClipboard.getInstance().setContent(content);
+        // now we should have html ONLY
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertFalse(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        // 3) add only one
+        content.clear();
+        content.put(DataFormat.FILES, testFiles);
+        AppClipboard.getInstance().addContent(content);
+        // now we should have files AND html
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertFalse(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        // 3) add the rest
+        content.put(DataFormat.HTML, testString1);
+        content.put(DataFormat.IMAGE, testImage);
+        content.put(DataFormat.RTF, testString1);
+        content.put(DataFormat.PLAIN_TEXT, testString1);
+        content.put(DataFormat.URL, testString1);
+        content.put(TEST_APPCLIPBOARD, testString1);
+
+        AppClipboard.getInstance().addContent(content);
+        // and now we should have everything
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertTrue(AppClipboard.getInstance().hasImage());
+        Assert.assertTrue(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertTrue(AppClipboard.getInstance().hasUrl());
+        Assert.assertTrue(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+        
+        // 4) clear & add
+        AppClipboard.getInstance().clear();
+        AppClipboard.getInstance().addContent(content);
+        // and now we should have everything
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertTrue(AppClipboard.getInstance().hasImage());
+        Assert.assertTrue(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertTrue(AppClipboard.getInstance().hasUrl());
+        Assert.assertTrue(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        // 5) remove only one
+        AppClipboard.getInstance().clearContent(DataFormat.FILES);
+        // and now we should have everything except files
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertTrue(AppClipboard.getInstance().hasImage());
+        Assert.assertTrue(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertTrue(AppClipboard.getInstance().hasUrl());
+        Assert.assertTrue(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+    }
+
+    @Test
+    public void testSetAddClipboardSingle() {
+        // 1) set only one
+        AppClipboard.getInstance().setContent(DataFormat.FILES, testFiles);
+        // now we should have files ONLY
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertFalse(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertFalse(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+        
+        // 2) set another one only
+        AppClipboard.getInstance().setContent(DataFormat.HTML, testString1);
+        // now we should have html ONLY
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertFalse(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        // 3) add only one
+        AppClipboard.getInstance().addContent(DataFormat.FILES, testFiles);
+        // now we should have files AND html
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertFalse(AppClipboard.getInstance().hasImage());
+        Assert.assertFalse(AppClipboard.getInstance().hasRtf());
+        Assert.assertFalse(AppClipboard.getInstance().hasString());
+        Assert.assertFalse(AppClipboard.getInstance().hasUrl());
+        Assert.assertFalse(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        // 3) add the rest
+        AppClipboard.getInstance().addContent(DataFormat.HTML, testString1);
+        AppClipboard.getInstance().addContent(DataFormat.IMAGE, testImage);
+        AppClipboard.getInstance().addContent(DataFormat.RTF, testString1);
+        AppClipboard.getInstance().addContent(DataFormat.PLAIN_TEXT, testString1);
+        AppClipboard.getInstance().addContent(DataFormat.URL, testString1);
+        AppClipboard.getInstance().addContent(TEST_APPCLIPBOARD, testString1);
+        // and now we should have everything
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertTrue(AppClipboard.getInstance().hasImage());
+        Assert.assertTrue(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertTrue(AppClipboard.getInstance().hasUrl());
+        Assert.assertTrue(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        Assert.assertEquals(AppClipboard.getInstance().getFiles().get(0), testFiles.get(0));
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getHtml());
+        // Image can't be tested here since not in JavaFX thread
+//        Assert.assertEquals(testImage, AppClipboard.getInstance().getImage());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getRtf());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getString());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getUrl());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getContent(TEST_APPCLIPBOARD));
+        
+        // 4) clear & add
+        AppClipboard.getInstance().clear();
+        AppClipboard.getInstance().addContent(DataFormat.FILES, testFiles);
+        AppClipboard.getInstance().addContent(DataFormat.HTML, testString1);
+        AppClipboard.getInstance().addContent(DataFormat.IMAGE, testImage);
+        AppClipboard.getInstance().addContent(DataFormat.RTF, testString1);
+        AppClipboard.getInstance().addContent(DataFormat.PLAIN_TEXT, testString1);
+        AppClipboard.getInstance().addContent(DataFormat.URL, testString1);
+        AppClipboard.getInstance().addContent(TEST_APPCLIPBOARD, testString1);
+        // and now we should have everything
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertTrue(AppClipboard.getInstance().hasImage());
+        Assert.assertTrue(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertTrue(AppClipboard.getInstance().hasUrl());
+        Assert.assertTrue(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
+
+        Assert.assertEquals(AppClipboard.getInstance().getFiles().get(0), testFiles.get(0));
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getHtml());
+        // Image can't be tested here since not in JavaFX thread
+//        Assert.assertEquals(testImage, AppClipboard.getInstance().getImage());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getRtf());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getString());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getUrl());
+        Assert.assertEquals(testString1, AppClipboard.getInstance().getContent(TEST_APPCLIPBOARD));
+
+        // 5) remove only one
+        AppClipboard.getInstance().clearContent(DataFormat.FILES);
+        // and now we should have everything except files
+        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasFiles());
+        Assert.assertTrue(AppClipboard.getInstance().hasHtml());
+        Assert.assertTrue(AppClipboard.getInstance().hasImage());
+        Assert.assertTrue(AppClipboard.getInstance().hasRtf());
+        Assert.assertTrue(AppClipboard.getInstance().hasString());
+        Assert.assertTrue(AppClipboard.getInstance().hasUrl());
+        Assert.assertTrue(AppClipboard.getInstance().hasContent(TEST_APPCLIPBOARD));
     }
 }
