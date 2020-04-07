@@ -68,16 +68,14 @@ public class TableViewPreferences {
         return INSTANCE;
     }
     
-    @SuppressWarnings("unchecked") 
     public static void saveTableViewPreferences(final TableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
-        saveColumnPreferences(tableView.getColumns(), prefPrefix, prefStore);
-        saveSortPreferences(tableView.getSortOrder(), prefPrefix, prefStore);
+        saveColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
+        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
     }
     
-    @SuppressWarnings("unchecked") 
     public static void saveTreeTableViewPreferences(final TreeTableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
-        saveColumnPreferences(tableView.getColumns(), prefPrefix, prefStore);
-        saveSortPreferences(tableView.getSortOrder(), prefPrefix, prefStore);
+        saveColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
+        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
     }
     
     private static void saveColumnPreferences(final ObservableList<TableColumnBase> columns, final String prefPrefix, final IPreferencesStore prefStore) {
@@ -139,13 +137,13 @@ public class TableViewPreferences {
     
     @SuppressWarnings("unchecked") 
     public static void loadTreeTableViewPreferences(final TreeTableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
-        ObservableList<TableColumnBase> columns = loadColumnPreferences(tableView.getColumns(), prefPrefix, prefStore);
+        ObservableList<TableColumnBase> columns = loadColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
         if (!tableView.getColumns().equals(columns)) {
             tableView.getColumns().clear();
             tableView.getColumns().addAll(columns);
         }
 
-        columns = loadSortPreferences(tableView.getColumns(), prefPrefix, prefStore);
+        columns = loadSortPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
         if (!tableView.getSortOrder().equals(columns)) {
             tableView.getSortOrder().clear();
             tableView.getSortOrder().addAll(columns);
@@ -154,13 +152,13 @@ public class TableViewPreferences {
 
     @SuppressWarnings("unchecked") 
     public static void loadTableViewPreferences(final TableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
-        ObservableList<TableColumnBase> columns = loadColumnPreferences(tableView.getColumns(), prefPrefix, prefStore);
+        ObservableList<TableColumnBase> columns = loadColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
         if (!tableView.getColumns().equals(columns)) {
             tableView.getColumns().clear();
             tableView.getColumns().addAll(columns);
         }
 
-        columns = loadSortPreferences(tableView.getColumns(), prefPrefix, prefStore);
+        columns = loadSortPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
         if (!tableView.getSortOrder().equals(columns)) {
             tableView.getSortOrder().clear();
             tableView.getSortOrder().addAll(columns);

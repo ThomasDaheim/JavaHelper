@@ -113,25 +113,22 @@ public class AppClipboard implements TKClipboard {
     }
 
     // Puts content onto the clipboard.
-    @SuppressWarnings("unchecked")
     public boolean setContent(Map<DataFormat, Object> content) {
         return newContent(true, content);
     }
 
     // Puts content onto the clipboard.
-    @SuppressWarnings("unchecked")
     public boolean addContent(Map<DataFormat, Object> content) {
         return newContent(false, content);
     }
     
-    @SuppressWarnings("unchecked")
     private boolean newContent(final boolean doClear, Map<DataFormat, Object> content) {
         // slightly different than the code in Clipboard: we don't have to fiddle around here with contentPut
         if (content == null) {
-            putContent(doClear, new Pair[0]);
+            putContent(doClear, ObjectsHelper.uncheckedCast(new Pair[0]));
             return true;
         } else {
-            Pair<DataFormat, Object>[] data = new Pair[content.size()];
+            Pair<DataFormat, Object>[] data = ObjectsHelper.uncheckedCast(new Pair[content.size()]);
             int index = 0;
             for (Map.Entry<DataFormat, Object> entry : content.entrySet()) {
                 data[index++] = new Pair<>(entry.getKey(), entry.getValue());
@@ -141,25 +138,22 @@ public class AppClipboard implements TKClipboard {
     }
 
     // Puts content onto the clipboard.
-    @SuppressWarnings("unchecked")
     public boolean setContent(DataFormat format, Object content) {
         return newContent(true, format, content);
     }
     
     // Adds content onto the clipboard.
-    @SuppressWarnings("unchecked")
     public boolean addContent(DataFormat format, Object content) {
         return newContent(false, format, content);
     }
     
-    @SuppressWarnings("unchecked")
     private boolean newContent(final boolean doClear, DataFormat format, Object content) {
         // slightly different than the code in Clipboard: we don't have to fiddle around here with contentPut
         if (content == null) {
-            putContent(doClear, new Pair[0]);
+            putContent(doClear, ObjectsHelper.uncheckedCast(new Pair[0]));
             return true;
         } else {
-            Pair<DataFormat, Object>[] data = new Pair[1];
+            Pair<DataFormat, Object>[] data = ObjectsHelper.uncheckedCast(new Pair[1]);
             data[0] = new Pair<>(format, content);
             return putContent(doClear, data);
         }
@@ -197,9 +191,8 @@ public class AppClipboard implements TKClipboard {
     }
 
     // Gets the List of Files from the clipboard which had previously been registered.
-    @SuppressWarnings("unchecked")
     public List<File> getFiles() {
-        return (List<File>) getContent(DataFormat.FILES);
+        return ObjectsHelper.uncheckedCast(getContent(DataFormat.FILES));
     }
 
     // Gets whether an HTML text String (DataFormat.HTML) has been registered on this Clipboard.

@@ -30,6 +30,7 @@ import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Control;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.SeparatorMenuItem;
@@ -61,26 +62,23 @@ public class TableMenuUtils {
      * IMPORTANT: Modification is only possible AFTER the table has been made visible, otherwise you'd get a NullPointerException
      * @param tableView
      */
-    @SuppressWarnings("unchecked")
     public static void addCustomTableViewMenu(final TableView tableView) {
         // enable table menu
         tableView.setTableMenuButtonVisible(true);
 
         // replace internal mouse listener with custom listener 
-        setCustomContextMenu((SkinBase<?>) tableView.getSkin(), tableView.getColumns());
+        setCustomContextMenu(ObjectsHelper.uncheckedCast(tableView.getSkin()), ObjectsHelper.uncheckedCast(tableView.getColumns()));
     }
 
-    @SuppressWarnings("unchecked")
     public static void addCustomTreeTableViewMenu(final TreeTableView tableView) {
         // enable table menu
         tableView.setTableMenuButtonVisible(true);
 
         // replace internal mouse listener with custom listener 
-        setCustomContextMenu((SkinBase<?>) tableView.getSkin(), tableView.getColumns());
+        setCustomContextMenu(ObjectsHelper.uncheckedCast(tableView.getSkin()), ObjectsHelper.uncheckedCast(tableView.getColumns()));
     }
 
-    @SuppressWarnings("unchecked")
-    private static void setCustomContextMenu(final SkinBase<?> tableSkin, final ObservableList<TableColumnBase<?, ?>> columns) {
+    private static void setCustomContextMenu(final SkinBase<? extends Control> tableSkin, final ObservableList<TableColumnBase<?, ?>> columns) {
         // get all children of the skin
         final ObservableList<Node> children = tableSkin.getChildren();
 

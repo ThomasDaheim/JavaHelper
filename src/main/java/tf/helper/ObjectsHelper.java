@@ -32,7 +32,7 @@ package tf.helper;
  */
 public class ObjectsHelper {
     @SuppressWarnings( "unchecked" )
-    static <T> T uncheckedCast( final Object target ) {
+    public static <T> T uncheckedCast( final Object target ) {
         return (T) target;
     }
 }
