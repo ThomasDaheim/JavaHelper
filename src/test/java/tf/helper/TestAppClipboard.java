@@ -72,7 +72,7 @@ public class TestAppClipboard {
     @Test
     public void testEmptyAppClipboard() {
         Assert.assertNotNull(AppClipboard.getInstance());
-        Assert.assertFalse(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -89,7 +89,7 @@ public class TestAppClipboard {
         
         AppClipboard.getInstance().setContent(content);
         // nothing has been put - only an empty map passed!
-        Assert.assertFalse(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -108,7 +108,7 @@ public class TestAppClipboard {
         content.put(TEST_APPCLIPBOARD, testString1);
 
         AppClipboard.getInstance().setContent(content);
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -130,7 +130,7 @@ public class TestAppClipboard {
         content.put(DataFormat.PLAIN_TEXT, testString2);
         
         AppClipboard.getInstance().setContent(content);
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -151,7 +151,7 @@ public class TestAppClipboard {
         // 4) and not throw away everything
         AppClipboard.getInstance().clear();
         
-        Assert.assertFalse(AppClipboard.getInstance().contentPut());
+        Assert.assertFalse(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -163,7 +163,7 @@ public class TestAppClipboard {
         // single add
         AppClipboard.getInstance().setContent(DataFormat.PLAIN_TEXT, testString1);
         
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -186,7 +186,7 @@ public class TestAppClipboard {
         content.put(DataFormat.FILES, testFiles);
         AppClipboard.getInstance().setContent(content);
         // now we should have files ONLY
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -200,7 +200,7 @@ public class TestAppClipboard {
         content.put(DataFormat.HTML, testString1);
         AppClipboard.getInstance().setContent(content);
         // now we should have html ONLY
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -214,7 +214,7 @@ public class TestAppClipboard {
         content.put(DataFormat.FILES, testFiles);
         AppClipboard.getInstance().addContent(content);
         // now we should have files AND html
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -233,7 +233,7 @@ public class TestAppClipboard {
 
         AppClipboard.getInstance().addContent(content);
         // and now we should have everything
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -246,7 +246,7 @@ public class TestAppClipboard {
         AppClipboard.getInstance().clear();
         AppClipboard.getInstance().addContent(content);
         // and now we should have everything
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -258,7 +258,7 @@ public class TestAppClipboard {
         // 5) remove only one
         AppClipboard.getInstance().clearContent(DataFormat.FILES);
         // and now we should have everything except files
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -273,7 +273,7 @@ public class TestAppClipboard {
         // 1) set only one
         AppClipboard.getInstance().setContent(DataFormat.FILES, testFiles);
         // now we should have files ONLY
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertFalse(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -285,7 +285,7 @@ public class TestAppClipboard {
         // 2) set another one only
         AppClipboard.getInstance().setContent(DataFormat.HTML, testString1);
         // now we should have html ONLY
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -297,7 +297,7 @@ public class TestAppClipboard {
         // 3) add only one
         AppClipboard.getInstance().addContent(DataFormat.FILES, testFiles);
         // now we should have files AND html
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertFalse(AppClipboard.getInstance().hasImage());
@@ -314,7 +314,7 @@ public class TestAppClipboard {
         AppClipboard.getInstance().addContent(DataFormat.URL, testString1);
         AppClipboard.getInstance().addContent(TEST_APPCLIPBOARD, testString1);
         // and now we should have everything
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -342,7 +342,7 @@ public class TestAppClipboard {
         AppClipboard.getInstance().addContent(DataFormat.URL, testString1);
         AppClipboard.getInstance().addContent(TEST_APPCLIPBOARD, testString1);
         // and now we should have everything
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertTrue(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
@@ -363,7 +363,7 @@ public class TestAppClipboard {
         // 5) remove only one
         AppClipboard.getInstance().clearContent(DataFormat.FILES);
         // and now we should have everything except files
-        Assert.assertTrue(AppClipboard.getInstance().contentPut());
+        Assert.assertTrue(AppClipboard.getInstance().hasContentProperty().get());
         Assert.assertFalse(AppClipboard.getInstance().hasFiles());
         Assert.assertTrue(AppClipboard.getInstance().hasHtml());
         Assert.assertTrue(AppClipboard.getInstance().hasImage());
