@@ -34,6 +34,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.image.Image;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -59,7 +63,9 @@ public class AppClipboard implements TKClipboard {
     /**
      * Whether user has put something on this clipboard. Needed for DnD.
      */
-    private boolean contentPut = false;
+    private final BooleanProperty hasContentProperty = new SimpleBooleanProperty(false);
+    // poor mans change listener to avoid ObservableMap & its exposure
+    private final IntegerProperty putCountProperty = new SimpleIntegerProperty(0);
     
     private AppClipboard() {
         super();
@@ -69,8 +75,12 @@ public class AppClipboard implements TKClipboard {
         return INSTANCE;
     }
     
-    public boolean contentPut() {
-        return contentPut;
+    public BooleanProperty hasContentProperty() {
+        return hasContentProperty;
+    }
+    
+    public IntegerProperty putCountProperty() {
+        return putCountProperty;
     }
     
     @Override
@@ -92,15 +102,17 @@ public class AppClipboard implements TKClipboard {
 
         // all OK, replace clipboard content
         if (doClear) {
-            contentPut = false;
             values.clear();
+            hasContentProperty.set(false);
+            putCountProperty.set(0);
         }
         for (final Pair<DataFormat, Object> pair: content) {
-            contentPut = true;
             values.put(pair.getKey(), pair.getValue());
+            hasContentProperty.set(true);
+            putCountProperty.set(putCountProperty.get()+1);
         }
 
-        return contentPut;
+        return hasContentProperty.get();
     }
     
     // Clears the clipboard of any and all content.
@@ -123,7 +135,7 @@ public class AppClipboard implements TKClipboard {
     }
     
     private boolean newContent(final boolean doClear, Map<DataFormat, Object> content) {
-        // slightly different than the code in Clipboard: we don't have to fiddle around here with contentPut
+        // slightly different than the code in Clipboard: we don't have to fiddle around here with hasContentProperty
         if (content == null) {
             putContent(doClear, ObjectsHelper.uncheckedCast(new Pair[0]));
             return true;
@@ -148,7 +160,7 @@ public class AppClipboard implements TKClipboard {
     }
     
     private boolean newContent(final boolean doClear, DataFormat format, Object content) {
-        // slightly different than the code in Clipboard: we don't have to fiddle around here with contentPut
+        // slightly different than the code in Clipboard: we don't have to fiddle around here with hasContentProperty
         if (content == null) {
             putContent(doClear, ObjectsHelper.uncheckedCast(new Pair[0]));
             return true;
