@@ -46,7 +46,10 @@ public enum UsefulKeyCodes {
     INSERT(new KeyCodeCombination(KeyCode.INSERT)),
     // TFE, 20200214: add some for save, cancel, esc, ...
     CNTRL_S(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY)),
-    ESCAPE(new KeyCodeCombination(KeyCode.ESCAPE));
+    ESCAPE(new KeyCodeCombination(KeyCode.ESCAPE)),
+    F3(new KeyCodeCombination(KeyCode.F3)),
+    SHIFT_F3(new KeyCodeCombination(KeyCode.F3, KeyCombination.SHIFT_DOWN)),
+    ;
 
     private final KeyCodeCombination keyCode;
 
