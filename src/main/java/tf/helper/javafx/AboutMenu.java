@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
+package tf.helper.javafx;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -47,6 +47,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Window;
 import javax.imageio.ImageIO;
+import tf.helper.general.AppInfo;
 
 /**
  *

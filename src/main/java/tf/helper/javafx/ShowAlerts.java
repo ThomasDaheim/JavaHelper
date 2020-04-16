@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
+package tf.helper.javafx;
 
 import java.util.Optional;
 import javafx.scene.control.Alert;
@@ -33,6 +33,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import tf.helper.general.UsefulKeyCodes;
 
 /**
  *

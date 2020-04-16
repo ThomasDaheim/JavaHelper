@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
+package tf.helper.javafx;
 
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
@@ -40,6 +40,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.skin.TableHeaderRow;
 import javafx.scene.input.MouseEvent;
+import tf.helper.general.ObjectsHelper;
 
 /**
  * Customize the table menu for tableviews and treetableviews.

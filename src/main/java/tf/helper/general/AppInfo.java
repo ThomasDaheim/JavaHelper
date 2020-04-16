@@ -23,8 +23,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
+package tf.helper.general;
 
+import tf.helper.javafx.AboutMenu;
 import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;

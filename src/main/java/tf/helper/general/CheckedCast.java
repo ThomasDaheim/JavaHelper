@@ -23,51 +23,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+package tf.helper.general;
 
 /**
- *
- * @author Thomas, based on http://www.javaspecialists.eu/archive/Issue219.html
- * @param <E> type of thing to store in list
+ * Helper to safely cast and to avoid @SuprressWarnings("unchecked")
+ * see e.g. https://stackoverflow.com/a/26022571
+ * 
+ * BUT not working for generics - so not really useful in the moment :-(
+ * 
+ * @author thomas
  */
-class RecentList<E> implements Iterable<E> {
-    private final ArrayList<E> myList = new ArrayList<>();
-    private final int myMaxLength;
-
-    public RecentList(final int maxLength) {
-        myMaxLength = maxLength;
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return Collections.unmodifiableCollection(myList).iterator();
-    }
-
-    public void add(final E element) {
-        myList.remove(element);
-        myList.add(0, element);
-        reduce();
-    }
-    
-    public int getMaxLength() {
-        return myMaxLength;
-    }
-    
-    public int getLength() {
-        return myList.size();
-    }
-
-    private void reduce() {
-        while (myList.size() > myMaxLength) {
-            myList.remove(myList.size() - 1);
-        }
-    }
-
-    public void clear() {
-        myList.clear();
-    }
+public class CheckedCast {
+    public static <T> T cast(final Class<T> clazz, final Object object)
+    {
+        return clazz.isInstance(object) ? clazz.cast(object) : null;
+    }    
 }

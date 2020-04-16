@@ -23,41 +23,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
+package tf.helper.general;
 
-import javafx.scene.paint.Color;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 
 /**
- * Helper for various conversions between colors from
- * JavaFX, css, kml
- * With the help of https://stackoverflow.com/a/56733608
+ *
  * @author thomas
  */
-public class ColorConverter {
-    private final static ColorConverter INSTANCE = new ColorConverter();
-    
-    private ColorConverter() {
+public enum UsefulKeyCodes {
+    CNTRL_A(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_ANY)),
+    CNTRL_C(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY)),
+    CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY)),
+    SHIFT_CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY, KeyCombination.SHIFT_DOWN)),
+    CNTRL_X(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_ANY)),
+    SHIFT_DEL(new KeyCodeCombination(KeyCode.DELETE, KeyCombination.SHIFT_DOWN)),
+    DEL(new KeyCodeCombination(KeyCode.DELETE)),
+    SHIFT_INSERT(new KeyCodeCombination(KeyCode.INSERT, KeyCombination.SHIFT_DOWN)),
+    INSERT(new KeyCodeCombination(KeyCode.INSERT)),
+    // TFE, 20200214: add some for save, cancel, esc, ...
+    CNTRL_S(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY)),
+    ESCAPE(new KeyCodeCombination(KeyCode.ESCAPE)),
+    F3(new KeyCodeCombination(KeyCode.F3)),
+    SHIFT_F3(new KeyCodeCombination(KeyCode.F3, KeyCombination.SHIFT_DOWN)),
+    ;
+
+    private final KeyCodeCombination keyCode;
+
+    private UsefulKeyCodes(final KeyCodeCombination key) {
+        keyCode = key;
     }
 
-    public static ColorConverter getInstance() {
-        return INSTANCE;
-    }
-    
-    // two char hex 0..255 from double value 0..1
-    private static String doubleToHex(double val) {
-        final String in = Integer.toHexString((int) Math.round(val * 255)).toUpperCase();
-        
-        return in.length() == 1 ? "0" + in : in;
+    public KeyCodeCombination getKeyCodeCombination() {
+        return keyCode;
     }
 
-    // https://stackoverflow.com/a/56733608
-    public static String JavaFXtoKML(final Color color) {
-        // kml uses alpha + BGR
-        return "ff" + doubleToHex(color.getBlue()) + doubleToHex(color.getGreen()) + doubleToHex(color.getRed());
-    }
-
-    public static String JavaFXtoCSS(final Color color) {
-        // kml uses alpha + BGR
-        return "#" + (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue())).toUpperCase();
+    public boolean match(final KeyEvent event) {
+        return keyCode.match(event);
     }
 }

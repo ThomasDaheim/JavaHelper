@@ -25,6 +25,7 @@
  */
 package tf.helper;
 
+import tf.helper.general.AppClipboard;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;

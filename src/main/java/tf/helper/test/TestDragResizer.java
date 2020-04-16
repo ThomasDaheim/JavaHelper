@@ -38,7 +38,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import tf.helper.DragResizer;
+import tf.helper.javafx.DragResizer;
 
 /**
  *

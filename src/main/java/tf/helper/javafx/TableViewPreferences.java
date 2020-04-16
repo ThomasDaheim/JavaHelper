@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper;
+package tf.helper.javafx;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +36,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import tf.helper.general.IPreferencesStore;
+import tf.helper.general.ObjectsHelper;
 
 /**
  * This is a helper class to save & load settings for a tableview
