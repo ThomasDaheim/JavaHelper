@@ -80,7 +80,7 @@ public class DoUndoActionList extends AbstractDoUndoAction {
         boolean result = true;
         
         for (IDoUndoAction action : myActions) {
-            if (!canDo()) {
+            if (!action.canDo()) {
                 result = false;
                 break;
             }
@@ -95,7 +95,7 @@ public class DoUndoActionList extends AbstractDoUndoAction {
         boolean result = true;
         
         for (IDoUndoAction action : myActions) {
-            if (!canUndo()) {
+            if (!action.canUndo()) {
                 result = false;
                 break;
             }

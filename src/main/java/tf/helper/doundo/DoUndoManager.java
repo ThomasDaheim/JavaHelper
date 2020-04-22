@@ -47,15 +47,17 @@ public class DoUndoManager implements IDoUndoStack {
     }
     
     private boolean verifyKey(final boolean mustExist, String... key) {
+        // see http://robertmarkbramprogrammer.blogspot.com/2013/03/nulls-and-varargs.html for what to expect
         if (key == null) {
+            System.out.println("DoUndoManager called with null key");
             return false;
         }
-        
-        if (key.length != 1) {
+        if (key.length != 1 || key[0] == null) {
+            System.out.println("DoUndoManager called with incorrect key array: " + key + ", " + key.length);
             return false;
         }
-        
         if (mustExist && !stackMap.containsKey(key[0])) {
+            System.out.println("DoUndoManager called for non-existing key: " + key[0]);
             return false;
         }
 

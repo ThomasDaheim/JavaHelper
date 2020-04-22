@@ -82,14 +82,17 @@ public class DoUndoStack implements IDoUndoStack {
         return !undoStack.empty();
     }
     
+    @Override
     public int getDoStackSize(String... key) {
         return doStack.size();
     }
     
+    @Override
     public int getUndoStackSize(String... key) {
         return undoStack.size();
     }
 
+    @Override
     public boolean singleUndo(String... key) {
         if (!canUndo()) {
             return false;
@@ -98,16 +101,19 @@ public class DoUndoStack implements IDoUndoStack {
         return singleUndoImpl();
     }
     private boolean singleUndoImpl() {
-        final IDoUndoAction action = undoStack.pop();
-        doStack.push(action);
-        
+        final IDoUndoAction action = undoStack.peek();
         if (!action.canUndo()) {
+            // can't currently undo, so don't change stack
             return false;
         }
+        
+        undoStack.pop();
+        doStack.push(action);
         
         return action.undoAction();
     }
 
+    @Override
     public boolean singleDo(String... key) {
         if (!canDo()) {
             return false;
@@ -116,16 +122,19 @@ public class DoUndoStack implements IDoUndoStack {
         return singleDoImpl();
     }
     private boolean singleDoImpl() {
-        final IDoUndoAction action = doStack.pop();
-        undoStack.push(action);
-        
+        final IDoUndoAction action = doStack.peek();
         if (!action.canDo()) {
+            // can't currently do, so don't change stack
             return false;
         }
+        
+        doStack.pop();
+        undoStack.push(action);
         
         return action.doAction();
     }
     
+    @Override
     public boolean rollBack(String... key) {
         if (!canUndo()) {
             return false;
@@ -142,6 +151,7 @@ public class DoUndoStack implements IDoUndoStack {
         return result;
     }
     
+    @Override
     public boolean rollForward(String... key) {
         if (!canDo()) {
             return false;

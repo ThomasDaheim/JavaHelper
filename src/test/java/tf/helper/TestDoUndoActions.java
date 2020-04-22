@@ -31,7 +31,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import tf.helper.doundo.AbstractDoUndoAction;
 import tf.helper.doundo.DoUndoActionList;
 import tf.helper.doundo.DoUndoException;
 import tf.helper.doundo.IDoUndoAction;
@@ -40,117 +39,16 @@ import tf.helper.doundo.IDoUndoAction;
  *
  * @author thomas
  */
-public class TestUndoRedo {
-    public class NumberedAction extends AbstractDoUndoAction {
-        private final int myCount;
-        
-        public NumberedAction(final int count) {
-            myCount = count;
-        }
-
-        @Override
-        public boolean undoHook() {
-            System.out.println("Undo for " + getDescription());
-            return true;
-        }
-
-        @Override
-        public boolean doHook() {
-            System.out.println("Do for " + getDescription());
-            return true;
-        }
-
-        @Override
-        public String getDescription() {
-            return "Action #" + myCount;
-        }
-    }
-    
-    public class NoUndoAction extends NumberedAction {
-        public NoUndoAction(int count) {
-            super(count);
-        }
-
-        @Override
-        public boolean undoHook() {
-            System.out.println("No Undo for " + getDescription());
-            return false;
-        }
-    }
-    
-    public class NoUndoOnlyOnceAction extends NumberedAction {
-        public NoUndoOnlyOnceAction(int count) {
-            super(count);
-        }
-
-        @Override
-        public boolean canDo() {
-            return (doneCount() == undoneCount());
-        }
-
-        @Override
-        public boolean undoHook() {
-            System.out.println("No Undo for " + getDescription());
-            return false;
-        }
-    }
-    
-    public class NoUndoStuckAction extends NumberedAction {
-        public NoUndoStuckAction(int count) {
-            super(count);
-        }
-
-        @Override
-        public boolean undoHook() {
-            System.out.println("No Undo for " + getDescription());
-            return false;
-        }
-        
-        @Override
-        public State getStateForFailedUndo() {
-            return State.STUCK_IN_UNDO;
-        } 
-    }
-    
-    public class NoDoAction extends NumberedAction {
-        public NoDoAction(int count) {
-            super(count);
-        }
-
-        @Override
-        public boolean doHook() {
-            System.out.println("No Do for " + getDescription());
-            return false;
-        }
-    }
-    
-    public class NoDoUndoAction extends NumberedAction {
-        public NoDoUndoAction(int count) {
-            super(count);
-        }
-
-        @Override
-        public boolean undoHook() {
-            System.out.println("No Undo for " + getDescription());
-            return false;
-        }
-
-        @Override
-        public boolean doHook() {
-            System.out.println("No Do for " + getDescription());
-            return false;
-        }
-    }
-    
-    private final IDoUndoAction action1 = new NumberedAction(1);
-    private final IDoUndoAction action2 = new NumberedAction(2);
-    private final IDoUndoAction action3 = new NumberedAction(3);
-    private final IDoUndoAction action4 = new NumberedAction(4);
-    private final IDoUndoAction noUndoAction = new NoUndoAction(11);
-    private final IDoUndoAction noUndoOnlyOnceAction = new NoUndoOnlyOnceAction(21);
-    private final IDoUndoAction noUndoStuckAction = new NoUndoStuckAction(31);
-    private final IDoUndoAction noDoAction = new NoDoAction(41);
-    private final IDoUndoAction noDoUndoAction = new NoDoUndoAction(51);
+public class TestDoUndoActions {
+    private final IDoUndoAction action1 = TestActions.getInstance().getNumberedAction(1);
+    private final IDoUndoAction action2 = TestActions.getInstance().getNumberedAction(2);
+    private final IDoUndoAction action3 = TestActions.getInstance().getNumberedAction(3);
+    private final IDoUndoAction action4 = TestActions.getInstance().getNumberedAction(4);
+    private final IDoUndoAction noUndoAction = TestActions.getInstance().getNoUndoAction(11);
+    private final IDoUndoAction noUndoOnlyOnceAction = TestActions.getInstance().getNoUndoOnlyOnceAction(21);
+    private final IDoUndoAction noUndoStuckAction = TestActions.getInstance().getNoUndoStuckAction(31);
+    private final IDoUndoAction noDoAction = TestActions.getInstance().getNoDoAction(41);
+    private final IDoUndoAction noDoUndoAction = TestActions.getInstance().getNoDoUndoAction(51);
 
     @BeforeClass
     public static void setUpClass() {
