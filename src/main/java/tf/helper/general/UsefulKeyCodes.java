@@ -49,6 +49,9 @@ public enum UsefulKeyCodes {
     ESCAPE(new KeyCodeCombination(KeyCode.ESCAPE)),
     F3(new KeyCodeCombination(KeyCode.F3)),
     SHIFT_F3(new KeyCodeCombination(KeyCode.F3, KeyCombination.SHIFT_DOWN)),
+    // TFE, 20200423: do / undo
+    CNTRL_Z(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_ANY)),
+    CNTRL_Y(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_ANY)),
     ;
 
     private final KeyCodeCombination keyCode;

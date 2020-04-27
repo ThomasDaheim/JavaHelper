@@ -26,6 +26,7 @@
 package tf.helper.doundo;
 
 import java.util.List;
+import javafx.beans.property.IntegerProperty;
 
 /**
  * Methods a vaild stack of do / undo actions needs to have.
@@ -50,4 +51,8 @@ public interface IDoUndoStack {
     
     abstract public boolean rollBack(String... key);
     abstract public boolean rollForward(String... key);
+    
+    abstract public IntegerProperty changeCountProperty();
+    
+    abstract public String getActionDescription(String... key);
 }

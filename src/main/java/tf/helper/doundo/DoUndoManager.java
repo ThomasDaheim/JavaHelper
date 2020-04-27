@@ -28,6 +28,8 @@ package tf.helper.doundo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * Manager for multiple DoUndoStacks in parallel.
@@ -36,8 +38,9 @@ import java.util.Map;
  */
 public class DoUndoManager implements IDoUndoStack {
     private final static DoUndoManager INSTANCE = new DoUndoManager();
-    
+
     private final Map<String, DoUndoStack> stackMap = new HashMap<>();
+    private final IntegerProperty changeCountProperty = new SimpleIntegerProperty(0);
     
     private DoUndoManager() {
     }
@@ -46,7 +49,7 @@ public class DoUndoManager implements IDoUndoStack {
         return INSTANCE;
     }
     
-    private boolean verifyKey(final boolean mustExist, String... key) {
+    private boolean verifyKey(final boolean mustExist, final boolean nonExistMessage, String... key) {
         // see http://robertmarkbramprogrammer.blogspot.com/2013/03/nulls-and-varargs.html for what to expect
         if (key == null) {
             System.out.println("DoUndoManager called with null key");
@@ -57,7 +60,10 @@ public class DoUndoManager implements IDoUndoStack {
             return false;
         }
         if (mustExist && !stackMap.containsKey(key[0])) {
-            System.out.println("DoUndoManager called for non-existing key: " + key[0]);
+            if (nonExistMessage) {
+                // no message on case of canDo()... calls to avoid that the callers have to check first if we have any do/undo stack at all for a key
+                System.out.println("DoUndoManager called for non-existing key: " + key[0]);
+            }
             return false;
         }
 
@@ -66,7 +72,7 @@ public class DoUndoManager implements IDoUndoStack {
 
     @Override
     public boolean addDoneAction(IDoUndoAction action, String... key) {
-        if (!verifyKey(false, key)) {
+        if (!verifyKey(false, false, key)) {
             return false;
         }
         
@@ -78,12 +84,13 @@ public class DoUndoManager implements IDoUndoStack {
             stackMap.replace(key[0], stack);
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return true;
     }
 
     @Override
     public boolean addDoneActions(List<IDoUndoAction> actions, String... key) {
-        if (!verifyKey(false, key)) {
+        if (!verifyKey(false, false, key)) {
             return false;
         }
         if (!stackMap.containsKey(key[0])) {
@@ -94,15 +101,17 @@ public class DoUndoManager implements IDoUndoStack {
             stackMap.replace(key[0], stack);
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return true;
     }
 
     @Override
     public boolean clear(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, true, key)) {
             return false;
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return stackMap.get(key[0]).clear(key);
     }
 
@@ -113,12 +122,13 @@ public class DoUndoManager implements IDoUndoStack {
         });
         stackMap.clear();
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return true;
     }
 
     @Override
     public boolean canDo(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, false, key)) {
             return false;
         }
         
@@ -127,7 +137,7 @@ public class DoUndoManager implements IDoUndoStack {
 
     @Override
     public boolean canUndo(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, false, key)) {
             return false;
         }
         
@@ -136,7 +146,7 @@ public class DoUndoManager implements IDoUndoStack {
 
     @Override
     public int getDoStackSize(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, false, key)) {
             return 0;
         }
         
@@ -145,7 +155,7 @@ public class DoUndoManager implements IDoUndoStack {
 
     @Override
     public int getUndoStackSize(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, false, key)) {
             return 0;
         }
         
@@ -154,38 +164,55 @@ public class DoUndoManager implements IDoUndoStack {
 
     @Override
     public boolean singleUndo(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, true, key)) {
             return false;
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return stackMap.get(key[0]).singleUndo(key);
     }
 
     @Override
     public boolean singleDo(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, true, key)) {
             return false;
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return stackMap.get(key[0]).singleDo(key);
     }
 
     @Override
     public boolean rollBack(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, true, key)) {
             return false;
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return stackMap.get(key[0]).rollBack(key);
     }
 
     @Override
     public boolean rollForward(String... key) {
-        if (!verifyKey(true, key)) {
+        if (!verifyKey(true, true, key)) {
             return false;
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return stackMap.get(key[0]).rollForward(key);
     }
     
+    @Override
+    public IntegerProperty changeCountProperty() {
+        return changeCountProperty;
+    }
+
+    @Override
+    public String getActionDescription(String... key) {
+        if (!verifyKey(true, false, key)) {
+            return "";
+        }
+        
+        return stackMap.get(key[0]).getActionDescription(key);
+    }
 }

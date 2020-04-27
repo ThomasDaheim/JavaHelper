@@ -27,6 +27,8 @@ package tf.helper.doundo;
 
 import java.util.List;
 import java.util.Stack;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * Stack of IDoUndoAction's that support single do / undo and rollback & rollforward
@@ -37,6 +39,8 @@ import java.util.Stack;
 public class DoUndoStack implements IDoUndoStack {
     private final Stack<IDoUndoAction> doStack = new Stack<>();
     private final Stack<IDoUndoAction> undoStack = new Stack<>();
+
+    private final IntegerProperty changeCountProperty = new SimpleIntegerProperty(0);
     
     public DoUndoStack() {
     }
@@ -51,11 +55,13 @@ public class DoUndoStack implements IDoUndoStack {
     
     @Override
     public boolean addDoneAction(final IDoUndoAction action, String... key) {
+        changeCountProperty.set(changeCountProperty.get()+1);
         return undoStack.add(action);
     }
     
     @Override
     public boolean addDoneActions(final List<IDoUndoAction> actions, String... key) {
+        changeCountProperty.set(changeCountProperty.get()+1);
         return undoStack.addAll(actions);
     }
     
@@ -64,6 +70,7 @@ public class DoUndoStack implements IDoUndoStack {
         doStack.clear();
         undoStack.clear();
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return true;
     }
 
@@ -98,6 +105,7 @@ public class DoUndoStack implements IDoUndoStack {
             return false;
         }
 
+        changeCountProperty.set(changeCountProperty.get()+1);
         return singleUndoImpl();
     }
     private boolean singleUndoImpl() {
@@ -119,6 +127,7 @@ public class DoUndoStack implements IDoUndoStack {
             return false;
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return singleDoImpl();
     }
     private boolean singleDoImpl() {
@@ -148,6 +157,7 @@ public class DoUndoStack implements IDoUndoStack {
             }
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return result;
     }
     
@@ -165,6 +175,35 @@ public class DoUndoStack implements IDoUndoStack {
             }
         }
         
+        changeCountProperty.set(changeCountProperty.get()+1);
         return result;
+    }
+    
+    @Override
+    public IntegerProperty changeCountProperty() {
+        return changeCountProperty;
+    }
+
+    @Override
+    public String getActionDescription(String... key) {
+        final StringBuilder builder = new StringBuilder();
+        
+        // add undo actions first
+        for (IDoUndoAction action : undoStack) {
+            builder.append(action.getDescription());
+            builder.append(System.lineSeparator());
+        }
+        
+        for (IDoUndoAction action : doStack) {
+            builder.append(action.getDescription());
+            builder.append(System.lineSeparator());
+        }
+        
+        // return anything up to the last lineSeparator
+        if (builder.length() > System.lineSeparator().length()) {
+            return builder.substring(0, builder.length()-System.lineSeparator().length());
+        } else {
+            return "";
+        }
     }
 }
