@@ -28,6 +28,8 @@ package tf.helper.doundo;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Action that consists of a list of actions.
@@ -136,12 +138,16 @@ public class DoUndoActionList extends AbstractDoUndoAction {
     private int internalUndo(final List<IDoUndoAction> actions) {
         int result = 0;
         
-        for (IDoUndoAction action : actions) {
-            if (action.undoAction()) {
-                result++;
-            } else {
-                break;
+        try {
+            for (IDoUndoAction action : actions) {
+                if (action.undoAction()) {
+                    result++;
+                } else {
+                    break;
+                }
             }
+        } catch (Exception ex) {
+            Logger.getLogger(DoUndoActionList.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return result;
@@ -174,12 +180,16 @@ public class DoUndoActionList extends AbstractDoUndoAction {
     private int internalDo(final List<IDoUndoAction> actions) {
         int result = 0;
         
-        for (IDoUndoAction action : actions) {
-            if (action.doAction()) {
-                result++;
-            } else {
-                break;
+        try {
+            for (IDoUndoAction action : actions) {
+                if (action.doAction()) {
+                    result++;
+                } else {
+                    break;
+                }
             }
+        } catch (Exception ex) {
+            Logger.getLogger(DoUndoActionList.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return result;

@@ -27,6 +27,8 @@ package tf.helper.doundo;
 
 import java.util.List;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
@@ -118,7 +120,16 @@ public class DoUndoStack implements IDoUndoStack {
         undoStack.pop();
         doStack.push(action);
         
-        return action.undoAction();
+        
+        boolean result;
+        try {
+            result = action.undoAction();
+        } catch (Exception ex) {
+            Logger.getLogger(DoUndoStack.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
+        }
+        
+        return result;
     }
 
     @Override
@@ -140,7 +151,15 @@ public class DoUndoStack implements IDoUndoStack {
         doStack.pop();
         undoStack.push(action);
         
-        return action.doAction();
+        boolean result;
+        try {
+            result = action.doAction();
+        } catch (Exception ex) {
+            Logger.getLogger(DoUndoStack.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
+        }
+        
+        return result;
     }
     
     @Override
@@ -186,15 +205,41 @@ public class DoUndoStack implements IDoUndoStack {
 
     @Override
     public String getActionDescription(String... key) {
-        final StringBuilder builder = new StringBuilder();
+        String result = "";
         
         // add undo actions first
-        for (IDoUndoAction action : undoStack) {
+        result = getUndoActionDescription();
+        result += System.lineSeparator();
+        result += getDoActionDescription();
+        
+        // return anything up to the last lineSeparator
+        if (result.length() > System.lineSeparator().length()) {
+            return result;
+        } else {
+            return "";
+        }
+    }
+
+    public String getDoActionDescription(String... key) {
+        final StringBuilder builder = new StringBuilder();
+        
+        for (IDoUndoAction action : doStack) {
             builder.append(action.getDescription());
             builder.append(System.lineSeparator());
         }
         
-        for (IDoUndoAction action : doStack) {
+        // return anything up to the last lineSeparator
+        if (builder.length() > System.lineSeparator().length()) {
+            return builder.substring(0, builder.length()-System.lineSeparator().length());
+        } else {
+            return "";
+        }
+    }
+
+    public String getUndoActionDescription(String... key) {
+        final StringBuilder builder = new StringBuilder();
+        
+        for (IDoUndoAction action : undoStack) {
             builder.append(action.getDescription());
             builder.append(System.lineSeparator());
         }

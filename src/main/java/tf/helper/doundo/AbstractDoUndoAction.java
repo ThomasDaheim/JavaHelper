@@ -25,6 +25,9 @@
  */
 package tf.helper.doundo;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Abstract base class for actions. Implements do / undo counter and their update logic.
  * @author thomas
@@ -52,7 +55,13 @@ public abstract class AbstractDoUndoAction implements IDoUndoAction {
             return false;
         }
         
-        final boolean result = doHook();
+        boolean result;
+        try {
+            result = doHook();
+        } catch (Exception ex) {
+            Logger.getLogger(AbstractDoUndoAction.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
+        }
         
         if (result) {
             doneCount++;
@@ -70,7 +79,13 @@ public abstract class AbstractDoUndoAction implements IDoUndoAction {
             return false;
         }
         
-        final boolean result = undoHook();
+        boolean result;
+        try {
+            result = undoHook();
+        } catch (Exception ex) {
+            Logger.getLogger(AbstractDoUndoAction.class.getName()).log(Level.SEVERE, null, ex);
+            result = false;
+        }
         
         if (result) {
             undoneCount++;

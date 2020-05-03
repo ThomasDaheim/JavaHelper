@@ -111,8 +111,9 @@ public class DoUndoManager implements IDoUndoStack {
             return false;
         }
         
+        final boolean result = stackMap.get(key[0]).clear(key);
         changeCountProperty.set(changeCountProperty.get()+1);
-        return stackMap.get(key[0]).clear(key);
+        return result;
     }
 
     @Override
@@ -168,8 +169,9 @@ public class DoUndoManager implements IDoUndoStack {
             return false;
         }
         
+        final boolean result = stackMap.get(key[0]).singleUndo(key);
         changeCountProperty.set(changeCountProperty.get()+1);
-        return stackMap.get(key[0]).singleUndo(key);
+        return result;
     }
 
     @Override
@@ -178,8 +180,9 @@ public class DoUndoManager implements IDoUndoStack {
             return false;
         }
         
+        final boolean result = stackMap.get(key[0]).singleDo(key);
         changeCountProperty.set(changeCountProperty.get()+1);
-        return stackMap.get(key[0]).singleDo(key);
+        return result;
     }
 
     @Override
@@ -188,8 +191,9 @@ public class DoUndoManager implements IDoUndoStack {
             return false;
         }
         
+        final boolean result = stackMap.get(key[0]).rollBack(key);
         changeCountProperty.set(changeCountProperty.get()+1);
-        return stackMap.get(key[0]).rollBack(key);
+        return result;
     }
 
     @Override
@@ -198,8 +202,9 @@ public class DoUndoManager implements IDoUndoStack {
             return false;
         }
         
+        final boolean result = stackMap.get(key[0]).rollForward(key);
         changeCountProperty.set(changeCountProperty.get()+1);
-        return stackMap.get(key[0]).rollForward(key);
+        return result;
     }
     
     @Override
@@ -214,5 +219,21 @@ public class DoUndoManager implements IDoUndoStack {
         }
         
         return stackMap.get(key[0]).getActionDescription(key);
+    }
+
+    public String getDoActionDescription(String... key) {
+        if (!verifyKey(true, false, key)) {
+            return "";
+        }
+        
+        return stackMap.get(key[0]).getDoActionDescription(key);
+    }
+
+    public String getUndoActionDescription(String... key) {
+        if (!verifyKey(true, false, key)) {
+            return "";
+        }
+        
+        return stackMap.get(key[0]).getUndoActionDescription(key);
     }
 }
