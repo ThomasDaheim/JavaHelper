@@ -92,23 +92,27 @@ public class EnumHelper {
         return result;
     }
     
-    public <T extends Enum> ChoiceBox createChoiceBox(final Class<T> enumClass, final Enum currentValue) {
+    public <T extends Enum> ChoiceBox<T> createChoiceBox(final Class<T> enumClass, final Enum currentValue) {
         final T[] values = enumClass.getEnumConstants();
 
         ChoiceBox<T> result = new ChoiceBox<>();
         result.setItems(FXCollections.observableArrayList(values));
         
-        result.getSelectionModel().select(currentValue.ordinal());
+        selectEnum(result, currentValue);
         
         return result;
     }
     
-    public <T extends Enum> T selectedEnumChoiceBox(final Class<T> enumClass, final ChoiceBox enumChoiceBox) {
+    public <T extends Enum> T selectedEnumChoiceBox(final Class<T> enumClass, final ChoiceBox<T> enumChoiceBox) {
         assert enumClass.getEnumConstants().length == enumChoiceBox.getItems().size();
                 
         final T[] values = enumClass.getEnumConstants();
         T result = values[enumChoiceBox.getSelectionModel().getSelectedIndex()];
 
         return result;
+    }
+    
+    public void selectEnum(final ChoiceBox<? extends Enum> enumChoiceBox, final Enum enumValue) {
+        enumChoiceBox.getSelectionModel().select(enumValue.ordinal());
     }
 }
