@@ -30,9 +30,9 @@ ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'wi
 // prefer. In this case NetBeans will not add these tasks but you may rely on
 // your own implementation.
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'tf.helper.test.TestIntegerProperty'
+    ext.mainClass = 'tf.helper.test.TestGridComboBox'
 }
-mainClassName = 'tf.helper.test.TestIntegerProperty'
+mainClassName = 'tf.helper.test.TestGridComboBox'
 group='tf.JavaHelper'
 version='1.5'
 
@@ -58,6 +58,8 @@ dependencies {
 
     compile 'commons-io:commons-io:2.6'
     compile 'org.apache.commons:commons-lang3:3.9'
+
+    compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
    
     testCompile "org.testfx:testfx-junit:4.0.+"
     testCompile "org.testfx:testfx-core:4.0.+"
@@ -94,6 +96,7 @@ def newArgs = [ '--add-modules', 'javafx.controls,javafx.graphics,javafx.base,ja
                 '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.behavior=ALL-UNNAMED',
                 '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.inputmap=ALL-UNNAMED',
                 '--add-exports', 'javafx.controls/com.sun.javafx.charts=ALL-UNNAMED',
+                '--add-exports', 'javafx.controls/com.sun.javafx.scene.control.skin.resources=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
