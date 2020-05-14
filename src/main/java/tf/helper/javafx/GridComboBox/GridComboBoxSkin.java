@@ -12,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.input.KeyCode;
@@ -45,7 +46,6 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<T> {
         super(control);
         
         myGridPane = createGridPane();
-        myGridPane.setManaged(false);
         getChildren().add(myGridPane);
 
         items = control.getItems();
@@ -82,21 +82,24 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<T> {
     
     private GridPane createGridPane() {
         final GridPane _gridPane = new GridPane() {
-            {
-                getProperties().put("selectFirstRowByDefault", false);
-            }
-
             @Override protected double computeMinHeight(double width) {
                 return 30;
             }
 
             @Override protected double computePrefWidth(double height) {
                 double pw = Math.max(100, comboBox.getWidth());
-                return Math.max(50, pw);
+                setPrefWidth(pw);
+                setMinWidth(pw);
+                setMaxWidth(pw);
+                return pw;
             }
 
             @Override protected double computePrefHeight(double width) {
-                return getListViewPrefHeight();
+                double ph = getListViewPrefHeight();
+                setPrefHeight(ph);
+                setMinHeight(ph);
+                setMaxHeight(ph);
+                return ph;
             }
         };
 
@@ -116,34 +119,34 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<T> {
 //            listViewSelectionDirty = true;
 //        });
 
-        _gridPane.addEventFilter(MouseEvent.MOUSE_RELEASED, t -> {
-            // RT-18672: Without checking if the user is clicking in the
-            // scrollbar area of the ListView, the comboBox will hide. Therefore,
-            // we add the check below to prevent this from happening.
-            EventTarget target = t.getTarget();
-            if (target instanceof Parent) {
-                List<String> s = ((Parent) target).getStyleClass();
-                if (s.contains("thumb")
-                        || s.contains("track")
-                        || s.contains("decrement-arrow")
-                        || s.contains("increment-arrow")) {
-                    return;
-                }
-            }
-
-            if (isHideOnClick()) {
-                comboBox.hide();
-            }
-        });
-
-        _gridPane.setOnKeyPressed(t -> {
-            // TODO move to behavior, when (or if) this class becomes a SkinBase
-            if (t.getCode() == KeyCode.ENTER ||
-                    t.getCode() == KeyCode.SPACE ||
-                    t.getCode() == KeyCode.ESCAPE) {
-                comboBox.hide();
-            }
-        });
+//        _gridPane.addEventFilter(MouseEvent.MOUSE_RELEASED, t -> {
+//            // RT-18672: Without checking if the user is clicking in the
+//            // scrollbar area of the ListView, the comboBox will hide. Therefore,
+//            // we add the check below to prevent this from happening.
+//            EventTarget target = t.getTarget();
+//            if (target instanceof Parent) {
+//                List<String> s = ((Parent) target).getStyleClass();
+//                if (s.contains("thumb")
+//                        || s.contains("track")
+//                        || s.contains("decrement-arrow")
+//                        || s.contains("increment-arrow")) {
+//                    return;
+//                }
+//            }
+//
+//            if (isHideOnClick()) {
+//                comboBox.hide();
+//            }
+//        });
+//
+//        _gridPane.setOnKeyPressed(t -> {
+//            // TODO move to behavior, when (or if) this class becomes a SkinBase
+//            if (t.getCode() == KeyCode.ENTER ||
+//                    t.getCode() == KeyCode.SPACE ||
+//                    t.getCode() == KeyCode.ESCAPE) {
+//                comboBox.hide();
+//            }
+//        });
 
         return _gridPane;
     }
@@ -165,13 +168,38 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<T> {
 //            // go through changes individually and update grid
 //        } else {
 //            // repaint whole grid
-        myGridPane.getChildren().setAll(items);
+        myGridPane.getChildren().clear();
+//        int rowNum = 0;
+//        int colNum = 0;
+//        for (T item : items) {
+////            System.out.println("Adding item " + item.toString() + " to col " + colNum + " row " + rowNum);
+//            myGridPane.add(item, colNum, rowNum, 1, 1);
+//            colNum++;
+//            
+//            if (colNum == 8) {
+//                rowNum++;
+//                colNum = 0;
+//            }
+//        }
+        myGridPane.add(new Label("#1"), 0, 0, 1, 1);
+        myGridPane.add(new Label("#2"), 1, 0, 1, 1);
+        myGridPane.add(new Label("#3"), 2, 0, 1, 1);
+        myGridPane.add(new Label("#4"), 0, 1, 1, 1);
+        myGridPane.add(new Label("#5"), 1, 1, 1, 1);
+        myGridPane.add(new Label("#6"), 2, 1, 1, 1);
         
 //        }
         
     }
 
     @Override public Node getPopupContent() {
+        myGridPane.setPrefWidth(150);
+        myGridPane.setMaxWidth(150);
+        myGridPane.setMinWidth(150);
+        myGridPane.setPrefHeight(200);
+        myGridPane.setMaxHeight(200);
+        myGridPane.setMinHeight(200);
         return myGridPane;
+//        return new Rectangle(150, 200);
     }
 }

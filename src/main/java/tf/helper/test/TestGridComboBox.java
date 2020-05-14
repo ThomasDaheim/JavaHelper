@@ -112,13 +112,13 @@ public class TestGridComboBox extends Application {
         comboBox23.getItems().add(new Label("6"));
         hBox2.getChildren().add(comboBox23);
 
-        final HBox hBox3 = new HBox();
-        hBox3.getChildren().addAll(
-                comboBox21.getGridComboBoxSkin().getPopupContent(),
-                comboBox22.getGridComboBoxSkin().getPopupContent(),
-                comboBox23.getGridComboBoxSkin().getPopupContent());
+//        final HBox hBox3 = new HBox();
+//        hBox3.getChildren().addAll(
+//                comboBox21.getGridComboBoxSkin().getPopupContent(),
+//                comboBox22.getGridComboBoxSkin().getPopupContent(),
+//                comboBox23.getGridComboBoxSkin().getPopupContent());
         
-        vBox.getChildren().addAll(hBox1, hBox2, hBox3);
+        vBox.getChildren().addAll(hBox1, hBox2);
         
         pane.getChildren().add(vBox);
         
