@@ -31,11 +31,12 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import tf.helper.javafx.GridComboBox.CheckComboBox;
+import tf.helper.javafx.GridComboBox.GridComboBox;
 
 /**
  *
@@ -60,11 +61,30 @@ public class TestGridComboBox extends Application {
         final StackPane pane = new StackPane();
         pane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         
-        final CheckComboBox<String> comboBox = new CheckComboBox<>();
-        comboBox.getItems().add("Test #1");
-        comboBox.getItems().add("Test #2");
-        comboBox.getItems().add("Test #3");
-        pane.getChildren().add(comboBox);
+        final HBox hBox = new HBox();
+        
+        final GridComboBox<String> comboBox1 = new GridComboBox<>();
+        comboBox1.setEditable(true);
+        comboBox1.getItems().add("Test #1");
+        comboBox1.getItems().add("Test #2");
+        comboBox1.getItems().add("Test #3");
+        hBox.getChildren().add(comboBox1);
+        
+        final GridComboBox<String> comboBox2 = new GridComboBox<>();
+        comboBox2.setEditable(false);
+        comboBox2.getItems().add("Test #1");
+        comboBox2.getItems().add("Test #2");
+        comboBox2.getItems().add("Test #3");
+        hBox.getChildren().add(comboBox2);
+        
+        final GridComboBox<Integer> comboBox3 = new GridComboBox<>();
+        comboBox3.setEditable(true);
+        comboBox3.getItems().add(1);
+        comboBox3.getItems().add(2);
+        comboBox3.getItems().add(3);
+        hBox.getChildren().add(comboBox3);
+
+        pane.getChildren().add(hBox);
         
         primaryStage.setScene(new Scene(pane, 800, 800));
         primaryStage.initStyle(StageStyle.DECORATED);
