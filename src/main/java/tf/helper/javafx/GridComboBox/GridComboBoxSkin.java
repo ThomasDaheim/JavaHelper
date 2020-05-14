@@ -6,55 +6,30 @@
 package tf.helper.javafx.GridComboBox;
 
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.ReadOnlyBooleanProperty;
-import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.property.StringProperty;
+import java.util.List;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import javafx.event.EventTarget;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.SingleSelectionModel;
-import javafx.scene.control.Skin;
+import javafx.scene.Parent;
 
-import javafx.scene.control.SkinBase;
-import javafx.scene.control.TextField;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.util.StringConverter;
 
 /**
  *
  * @author t.feuster
  * @param <T>
  */
-public class GridComboBoxSkin<T> extends SkinBase<GridComboBox<T>> {
-    
-    /**************************************************************************
-     * 
-     * Static fields
-     * 
-     **************************************************************************/
-
-    
-    
-    /**************************************************************************
-     * 
-     * fields
-     * 
-     **************************************************************************/
+public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<T> {
     
     // visuals
-    private final ComboBox<T> comboBox;
-    private final GridPane myGridPane = new GridPane();
+    private final GridComboBox<T> comboBox;
+    private final GridPane myGridPane;
     
     // data
-    private final GridComboBox<T> control;
     private final ObservableList<T> items;
     
     
@@ -69,18 +44,19 @@ public class GridComboBoxSkin<T> extends SkinBase<GridComboBox<T>> {
     public GridComboBoxSkin(final GridComboBox<T> control) {
         super(control);
         
-        this.control = control;
-        this.items = control.getItems();
+        myGridPane = createGridPane();
+        myGridPane.setManaged(false);
+        getChildren().add(myGridPane);
+
+        items = control.getItems();
+        items.addListener((ListChangeListener.Change<? extends T> c) -> {
+            updateGridPane(c);
+        });
+        updateGridPane(null);
         
-        comboBox = new ComboBox<T>(items) {
-            @Override
-            protected javafx.scene.control.Skin<?> createDefaultSkin() {
-                return createComboBoxListViewSkin(this);
-            }
-        };
+        comboBox = control;
         comboBox.setFocusTraversable(false);
         comboBox.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        Bindings.bindContent(control.getStyleClass(), comboBox.getStyleClass());
 
         // installs a custom CheckBoxListCell cell factory
 //        comboBox.setCellFactory(listView -> {
@@ -102,259 +78,100 @@ public class GridComboBoxSkin<T> extends SkinBase<GridComboBox<T>> {
 //            result.converterProperty().bind(control.converterProperty());
 //            return result;
 //        });
+    }
+    
+    private GridPane createGridPane() {
+        final GridPane _gridPane = new GridPane() {
+            {
+                getProperties().put("selectFirstRowByDefault", false);
+            }
+
+            @Override protected double computeMinHeight(double width) {
+                return 30;
+            }
+
+            @Override protected double computePrefWidth(double height) {
+                double pw = Math.max(100, comboBox.getWidth());
+                return Math.max(50, pw);
+            }
+
+            @Override protected double computePrefHeight(double width) {
+                return getListViewPrefHeight();
+            }
+        };
+
+        _gridPane.setId("grid-pane");
+        _gridPane.setFocusTraversable(false);
+
+        // TODO: match gridpane onclick to comboBox.getSelectionModel().select(index);
+//        _gridPane.getSelectionModel().selectedIndexProperty().addListener(o -> {
+//            if (listSelectionLock) return;
+//            int index = listView.getSelectionModel().getSelectedIndex();
+//            comboBox.getSelectionModel().select(index);
+//            updateDisplayNode();
+//            comboBox.notifyAccessibleAttributeChanged(AccessibleAttribute.TEXT);
+//        });
+
+//        comboBox.getSelectionModel().selectedItemProperty().addListener(o -> {
+//            listViewSelectionDirty = true;
+//        });
+
+        _gridPane.addEventFilter(MouseEvent.MOUSE_RELEASED, t -> {
+            // RT-18672: Without checking if the user is clicking in the
+            // scrollbar area of the ListView, the comboBox will hide. Therefore,
+            // we add the check below to prevent this from happening.
+            EventTarget target = t.getTarget();
+            if (target instanceof Parent) {
+                List<String> s = ((Parent) target).getStyleClass();
+                if (s.contains("thumb")
+                        || s.contains("track")
+                        || s.contains("decrement-arrow")
+                        || s.contains("increment-arrow")) {
+                    return;
+                }
+            }
+
+            if (isHideOnClick()) {
+                comboBox.hide();
+            }
+        });
+
+        _gridPane.setOnKeyPressed(t -> {
+            // TODO move to behavior, when (or if) this class becomes a SkinBase
+            if (t.getCode() == KeyCode.ENTER ||
+                    t.getCode() == KeyCode.SPACE ||
+                    t.getCode() == KeyCode.ESCAPE) {
+                comboBox.hide();
+            }
+        });
+
+        return _gridPane;
+    }
+
+    private double getListViewPrefHeight() {
+        double ch = items.size() * 25;
+        double ph = Math.min(ch, 200);
+
+        return ph;
+    }
+    
+    private void updateGridPane(ListChangeListener.Change<? extends T> c) {
+        if (items == null || items.isEmpty()) {
+            myGridPane.getChildren().clear();
+            return;
+        }
         
-        getChildren().add(comboBox);
-    }
-    
-    
-    /**************************************************************************
-     * 
-     * Overriding public API
-     * 
-     **************************************************************************/
-    
-    @Override protected double computeMinWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return comboBox.minWidth(height);
+//        if (c != null) {
+//            // go through changes individually and update grid
+//        } else {
+//            // repaint whole grid
+        myGridPane.getChildren().setAll(items);
+        
+//        }
+        
     }
 
-    @Override protected double computeMinHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return comboBox.minHeight(width);
-    }
-    
-    @Override protected double computePrefWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return comboBox.prefWidth(height);
-    }
-
-    @Override protected double computePrefHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return comboBox.prefHeight(width);
-    }
-    
-    @Override protected double computeMaxWidth(double height, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getSkinnable().prefWidth(height);
-    }
-
-    @Override protected double computeMaxHeight(double width, double topInset, double rightInset, double bottomInset, double leftInset) {
-        return getSkinnable().prefHeight(width);
-    }
-
-    /***************************************************************************
-     *                                                                         *
-     * Methods - passthrough to internal combo bo                              *
-     *                                                                         *
-     **************************************************************************/
-
-    /**
-     * Shows the internal ComboBox
-     */
-    public void show() {
-        comboBox.show();
-    }
-
-    /**
-     * Hides the internal ComboBox
-     */
-    public void hide() {
-        comboBox.hide();
-    }
-
-    public ObjectProperty<ObservableList<T>> itemsProperty() {
-        return comboBox.itemsProperty();
-    }
-
-    public ObjectProperty<StringConverter<T>> converterProperty() {
-        return comboBox.converterProperty();
-    }
-
-    public final void setConverter(StringConverter<T> sc) {
-        comboBox.setConverter(sc);
-    }
-
-    public final StringConverter<T> getConverter() {
-        return comboBox.getConverter();
-    }
-
-    public final void setSelectionModel(SingleSelectionModel<T> ssm) {
-        comboBox.setSelectionModel(ssm);
-    }
-
-    public final SingleSelectionModel<T> getSelectionModel() {
-        return comboBox.getSelectionModel();
-    }
-
-    public final ObjectProperty<SingleSelectionModel<T>> selectionModelProperty() {
-        return comboBox.selectionModelProperty();
-    }
-
-    public final void setVisibleRowCount(int i) {
-        comboBox.setVisibleRowCount(i);
-    }
-
-    public final int getVisibleRowCount() {
-        return comboBox.getVisibleRowCount();
-    }
-
-    public final IntegerProperty visibleRowCountProperty() {
-        return comboBox.visibleRowCountProperty();
-    }
-
-    public final TextField getEditor() {
-        return comboBox.getEditor();
-    }
-
-    public final ReadOnlyObjectProperty<TextField> editorProperty() {
-        return comboBox.editorProperty();
-    }
-
-    public final ObjectProperty<Node> placeholderProperty() {
-        return comboBox.placeholderProperty();
-    }
-
-    public final void setPlaceholder(Node node) {
-        comboBox.setPlaceholder(node);
-    }
-
-    public final Node getPlaceholder() {
-        return comboBox.getPlaceholder();
-    }
-
-    public final void commitValue() {
-        comboBox.commitValue();
-    }
-
-    public final void cancelEdit() {
-        comboBox.cancelEdit();
-    }
-    
-    public ObjectProperty<T> valueProperty() {
-        return comboBox.valueProperty();
-    }
-
-    public final void setValue(T t) {
-        comboBox.setValue(t);
-    }
-
-    public final T getValue() {
-        return comboBox.getValue();
-    }
-
-    public BooleanProperty editableProperty() {
-        return comboBox.editableProperty();
-    }
-
-    public final void setEditable(boolean bln) {
-        comboBox.setEditable(bln);
-    }
-
-    public final boolean isEditable() {
-        return comboBox.isEditable();
-    }
-
-    public ReadOnlyBooleanProperty showingProperty() {
-        return comboBox.showingProperty();
-    }
-
-    public final boolean isShowing() {
-        return comboBox.isShowing();
-    }
-
-
-    public final StringProperty promptTextProperty() {
-        return comboBox.promptTextProperty();
-    }
-
-    public final String getPromptText() {
-        return comboBox.getPromptText();
-    }
-
-    public final void setPromptText(String string) {
-        comboBox.setPromptText(string);
-    }
-
-    public BooleanProperty armedProperty() {
-        return comboBox.armedProperty();
-    }
-
-    public final boolean isArmed() {
-        return comboBox.isArmed();
-    }
-
-    public final ObjectProperty<EventHandler<ActionEvent>> onActionProperty() {
-        return comboBox.onActionProperty();
-    }
-
-    public final void setOnAction(EventHandler<ActionEvent> eh) {
-        comboBox.setOnAction(eh);
-    }
-
-    public final EventHandler<ActionEvent> getOnAction() {
-        return comboBox.getOnAction();
-    }
-
-    public final ObjectProperty<EventHandler<Event>> onShowingProperty() {
-        return comboBox.onShowingProperty();
-    }
-
-    public final void setOnShowing(EventHandler<Event> eh) {
-        comboBox.setOnShowing(eh);
-    }
-
-    public final EventHandler<Event> getOnShowing() {
-        return comboBox.getOnShowing();
-    }
-
-    public final ObjectProperty<EventHandler<Event>> onShownProperty() {
-        return comboBox.onShownProperty();
-    }
-
-    public final void setOnShown(EventHandler<Event> eh) {
-        comboBox.setOnShown(eh);
-    }
-
-    public final EventHandler<Event> getOnShown() {
-        return comboBox.getOnShown();
-    }
-
-    public final ObjectProperty<EventHandler<Event>> onHidingProperty() {
-        return comboBox.onHidingProperty();
-    }
-
-    public final void setOnHiding(EventHandler<Event> eh) {
-        comboBox.setOnHiding(eh);
-    }
-
-    public final EventHandler<Event> getOnHiding() {
-        return comboBox.getOnHiding();
-    }
-
-    public final ObjectProperty<EventHandler<Event>> onHiddenProperty() {
-        return comboBox.onHiddenProperty();
-    }
-
-    public final void setOnHidden(EventHandler<Event> eh) {
-        comboBox.setOnHidden(eh);
-    }
-
-    public final EventHandler<Event> getOnHidden() {
-        return comboBox.getOnHidden();
-    }
-
-    public void arm() {
-        comboBox.arm();
-    }
-
-    public void disarm() {
-        comboBox.disarm();
-    }
-
-    /**************************************************************************
-     * 
-     * Implementation
-     * 
-     **************************************************************************/
-    
-    private Skin<?> createComboBoxListViewSkin(ComboBox<T> comboBox) {
-        final ComboBoxListViewSkin<T> comboBoxListViewSkin = new ComboBoxListViewSkin<>(comboBox);
-        comboBoxListViewSkin.setHideOnClick(false);
-        return comboBoxListViewSkin;
+    @Override public Node getPopupContent() {
+        return myGridPane;
     }
 }
