@@ -16,7 +16,13 @@ apply plugin: 'maven-publish'
 
 // see https://github.com/kelemen/netbeans-gradle-project/issues/179
 apply plugin: 'idea'
-idea.module.downloadJavadoc = true
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
 
 ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 
