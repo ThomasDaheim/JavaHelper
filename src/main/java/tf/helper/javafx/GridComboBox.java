@@ -25,14 +25,10 @@
  */
 package tf.helper.javafx;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
@@ -42,6 +38,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
+import javafx.util.StringConverter;
 
 /**
  * ComboBox that show a GridPane as popup. 
@@ -62,6 +59,8 @@ import javafx.scene.layout.RowConstraints;
  * It allows makes sure that there are no 2 independent ways to add content to the GridComboBox. That would require a mechanism 
  * to keep the lists from getItems() and getChildren() in sync.
  * 
+ * Note: all updates to items<T> of the grid and to items of the underlying ComboBox<String> are done in GridComboBoxSkin.
+ * 
  * @author thomas
  * @param <T>
  */
@@ -69,31 +68,59 @@ public class GridComboBox<T extends Node> extends ComboBox<String> {
 
     private final boolean styleSheetAdded = getStylesheets().add(GridComboBox.class .getResource("/GridComboBox.css").toExternalForm());
     
-    // our own items - we only have the toString() of those in the combobox we extend...
-    private ObservableList<T> items = FXCollections.observableArrayList();
+    private static <T> StringConverter<T> defaultStringConverter() {
+        return new StringConverter<T>() {
+            @Override public String toString(T t) {
+                return t == null ? null : t.toString();
+            }
 
-    private final GridComboBoxSkin<T> gridComboBoxSkin = new GridComboBoxSkin<>(this);
+            @Override public T fromString(String string) {
+                // TODO: what could be a good default here?
+                return null;
+            }
+        };
+    }
+
+    // convinience implementation for Label
+    public static StringConverter<Label> labelStringConverter() {
+        return new StringConverter<Label>() {
+            @Override public String toString(Label s) {
+                return s == null ? null : s.getText();
+            }
+
+            @Override public Label fromString(String string) {
+                return new Label(string);
+            }
+        };
+    }
+
+    private final GridComboBoxSkin<T> gridComboBoxSkin;
     
     public GridComboBox() {
         super();
+        
+        gridComboBoxSkin = new GridComboBoxSkin<>(this, null);
     }
 
     public GridComboBox(ObservableList<T> ol) {
-        super(ol.stream().map((t) -> {
-            return t.toString();
-        }).collect(Collectors.toCollection(FXCollections::observableArrayList)));
+        super();
         
-        items = FXCollections.observableArrayList(ol);
+        gridComboBoxSkin = new GridComboBoxSkin<>(this, ol);
     }
     
-    public final ObservableList<T> getGridItems() {
-        return items;
-    }
-
-    public final void setGridItems(final ObservableList<T> newItems) {
-        items.setAll(newItems);
-    }
-
+    // --- string converter
+    /**
+     * Converts the user-typed input (when the ComboBox is
+     * {@link #editableProperty() editable}) to an object of type T, such that
+     * the input may be retrieved via the  {@link #valueProperty() value} property.
+     * @return the converter property
+     */
+    public ObjectProperty<StringConverter<T>> gridConverterProperty() { return gridConverter; }
+    private ObjectProperty<StringConverter<T>> gridConverter =
+            new SimpleObjectProperty<>(this, "gridConverter", defaultStringConverter());
+    public final void setGridConverter(StringConverter<T> value) { gridConverterProperty().set(value); }
+    public final StringConverter<T> getGridConverter() {return gridConverterProperty().get(); }
+    
     @Override
     protected javafx.scene.control.Skin<?> createDefaultSkin() {
         return gridComboBoxSkin;

@@ -28,6 +28,7 @@ package tf.helper.test;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -38,6 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.StringConverter;
 import tf.helper.javafx.GridComboBox;
 
 /**
@@ -45,7 +47,6 @@ import tf.helper.javafx.GridComboBox;
  * @author thomas
  */
 public class TestGridComboBox extends Application {
-    
     /**
      * @param args the command line arguments
      */
@@ -64,47 +65,60 @@ public class TestGridComboBox extends Application {
         pane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         
         final VBox vBox = new VBox();
-        
-//        final HBox hBox1 = new HBox();
-//        
-//        final GridComboAltBox<String> comboBox11 = new GridComboAltBox<>();
-//        comboBox11.setEditable(true);
-//        comboBox11.getItems().add("Test #1");
-//        comboBox11.getItems().add("Test #2");
-//        comboBox11.getItems().add("Test #3");
-//        hBox1.getChildren().add(comboBox11);
-//        
-//        final GridComboAltBox<String> comboBox12 = new GridComboAltBox<>();
-//        comboBox12.setEditable(false);
-//        comboBox12.getItems().add("Test #1");
-//        comboBox12.getItems().add("Test #2");
-//        comboBox12.getItems().add("Test #3");
-//        hBox1.getChildren().add(comboBox12);
-//        
-//        final GridComboAltBox<Integer> comboBox13 = new GridComboAltBox<>();
-//        comboBox13.setEditable(true);
-//        comboBox13.getItems().add(1);
-//        comboBox13.getItems().add(2);
-//        comboBox13.getItems().add(3);
-//        hBox1.getChildren().add(comboBox13);
 
+        // for comparison: standard combobox
+        final HBox hBox1 = new HBox(12);
+        
+        final ComboBox<String> comboBox11 = new ComboBox<>();
+        comboBox11.setEditable(true);
+        comboBox11.getItems().add("Test #1");
+        comboBox11.getItems().add("Test #2");
+        comboBox11.getItems().add("Test #3");
+        comboBox11.getEditor().setText("Test #1");
+        
+        final ComboBox<Integer> comboBox12 = new ComboBox<>();
+        comboBox12.setEditable(false);
+        comboBox12.getItems().add(4);
+        comboBox12.getItems().add(5);
+        comboBox12.getItems().add(6);
+        comboBox12.getEditor().setText("4");
+
+        final ComboBox<String> comboBox13 = new ComboBox<>();
+        comboBox13.setEditable(true);
+        comboBox13.getItems().add("Test #7");
+        comboBox13.getItems().add("Test #8");
+        comboBox13.getItems().add("Test #9");
+        comboBox13.getItems().add("Test #10");
+        comboBox13.getItems().add("Test #11");
+        comboBox13.getItems().add("Test #12");
+        comboBox13.getItems().add("Test #13");
+        comboBox13.getItems().add("Test #14");
+        comboBox13.getItems().add("Test #15");
+        comboBox13.getEditor().setText("Test #10");
+        
+        hBox1.getChildren().addAll(comboBox11, comboBox12, comboBox13);
+
+        // our new, enhanced, glorious combobox!
         final HBox hBox2 = new HBox(12);
         
         final GridComboBox<Label> comboBox21 = new GridComboBox<>();
         comboBox21.setEditable(true);
+        comboBox21.setGridConverter(GridComboBox.labelStringConverter());
         comboBox21.add(new Label("Test #1"), 0, 0);
         comboBox21.add(new Label("Test #2"), 0, 1);
         comboBox21.add(new Label("Test #3"), 0, 2);
-        comboBox21.getEditor().setText("#1");
+        comboBox21.getEditor().setText("Test #1");
         
         final GridComboBox<Label> comboBox22 = new GridComboBox<>();
+        comboBox22.setGridConverter(GridComboBox.labelStringConverter());
         comboBox22.setEditable(false);
         comboBox22.add(new Label("4"), 0, 0);
         comboBox22.add(new Label("5"), 0, 1);
         comboBox22.add(new Label("6"), 0, 2);
-        comboBox22.getEditor().setText("#2");
+        comboBox22.getEditor().setText("4");
         
         final GridComboBox<Label> comboBox23 = new GridComboBox<>();
+        comboBox23.setGridConverter(GridComboBox.labelStringConverter());
         comboBox23.setEditable(true);
         comboBox23.setGridLinesVisible(true);
         comboBox23.add(new Label("Test #7"), 0, 0);
@@ -116,11 +130,11 @@ public class TestGridComboBox extends Application {
         comboBox23.add(new Label("Test #13"), 0, 5);
         comboBox23.add(new Label("Test #14"), 1, 5);
         comboBox23.add(new Label("Test #15"), 2, 5);
-        comboBox23.getEditor().setText("#3");
+        comboBox23.getEditor().setText("Test #10");
         
         hBox2.getChildren().addAll(comboBox21, comboBox22, comboBox23);
 
-        vBox.getChildren().addAll(hBox2);
+        vBox.getChildren().addAll(hBox1, hBox2);
         
         pane.getChildren().add(vBox);
         
