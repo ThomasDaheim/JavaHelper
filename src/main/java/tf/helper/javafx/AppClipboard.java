@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package tf.helper.general;
+package tf.helper.javafx;
 
 import com.sun.javafx.tk.TKClipboard;
 import java.io.File;
@@ -44,6 +44,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.TransferMode;
 import javafx.util.Pair;
+import tf.helper.general.ObjectsHelper;
 
 /**
  * Drop-In replacement for Clipboard but working on app local data storage.

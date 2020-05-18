@@ -33,7 +33,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
-import tf.helper.general.UsefulKeyCodes;
 
 /**
  *

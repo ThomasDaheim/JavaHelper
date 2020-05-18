@@ -25,6 +25,8 @@
  */
 package tf.helper.javafx;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -76,6 +78,7 @@ public class GridComboBox<T extends Node> extends ComboBox<String> {
 
             @Override public T fromString(String string) {
                 // TODO: what could be a good default here?
+                Logger.getLogger(GridComboBox.class.getName()).log(Level.WARNING, "GridComboBox: defaultStringConverter() used, returning null node");
                 return null;
             }
         };

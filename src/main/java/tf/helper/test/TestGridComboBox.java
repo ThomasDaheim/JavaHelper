@@ -74,14 +74,14 @@ public class TestGridComboBox extends Application {
         comboBox11.getItems().add("Test #1");
         comboBox11.getItems().add("Test #2");
         comboBox11.getItems().add("Test #3");
-        comboBox11.getEditor().setText("Test #1");
+        comboBox11.setValue("Test #1");
         
         final ComboBox<Integer> comboBox12 = new ComboBox<>();
         comboBox12.setEditable(false);
         comboBox12.getItems().add(4);
         comboBox12.getItems().add(5);
         comboBox12.getItems().add(6);
-        comboBox12.getEditor().setText("4");
+        comboBox12.setValue(4);
 
         final ComboBox<String> comboBox13 = new ComboBox<>();
         comboBox13.setEditable(true);
@@ -94,7 +94,7 @@ public class TestGridComboBox extends Application {
         comboBox13.getItems().add("Test #13");
         comboBox13.getItems().add("Test #14");
         comboBox13.getItems().add("Test #15");
-        comboBox13.getEditor().setText("Test #10");
+        comboBox13.setValue("Test #10");
         
         hBox1.getChildren().addAll(comboBox11, comboBox12, comboBox13);
 
@@ -107,15 +107,18 @@ public class TestGridComboBox extends Application {
         comboBox21.add(new Label("Test #1"), 0, 0);
         comboBox21.add(new Label("Test #2"), 0, 1);
         comboBox21.add(new Label("Test #3"), 0, 2);
-        comboBox21.getEditor().setText("Test #1");
+        comboBox21.setValue("Test #1");
         
         final GridComboBox<Label> comboBox22 = new GridComboBox<>();
         comboBox22.setGridConverter(GridComboBox.labelStringConverter());
         comboBox22.setEditable(false);
         comboBox22.add(new Label("4"), 0, 0);
-        comboBox22.add(new Label("5"), 0, 1);
-        comboBox22.add(new Label("6"), 0, 2);
-        comboBox22.getEditor().setText("4");
+        comboBox22.getItems().add("a");
+        comboBox22.add(new Label("5"), 0, 2);
+        comboBox22.getItems().add("b");
+        comboBox22.add(new Label("6"), 0, 4);
+        comboBox22.getItems().add("c");
+        comboBox22.setValue("4");
         
         final GridComboBox<Label> comboBox23 = new GridComboBox<>();
         comboBox23.setGridConverter(GridComboBox.labelStringConverter());
@@ -130,7 +133,7 @@ public class TestGridComboBox extends Application {
         comboBox23.add(new Label("Test #13"), 0, 5);
         comboBox23.add(new Label("Test #14"), 1, 5);
         comboBox23.add(new Label("Test #15"), 2, 5);
-        comboBox23.getEditor().setText("Test #10");
+        comboBox23.setValue("Test #10");
         
         hBox2.getChildren().addAll(comboBox21, comboBox22, comboBox23);
 
