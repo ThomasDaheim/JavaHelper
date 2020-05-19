@@ -207,12 +207,9 @@ public class GridComboBox<T extends Node> extends ComboBox<String> {
         gridComboBoxSkin.addColumn(i, nodes);
     }
 
+    @Override
     public Orientation getContentBias() {
         return gridComboBoxSkin.getContentBias();
-    }
-
-    public String toString() {
-        return "";
     }
 
     public final int getRowCount() {

@@ -225,8 +225,6 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
                 }
             }
         });
-        
-        // TODO: add other relevant properties here as well, e.g. visibleRowCount and pass on to the gridpane
     }
     
     private GridPane createGridPane() {
@@ -237,7 +235,7 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
         _gridPane.setFocusTraversable(false);
         _gridPane.setSnapToPixel(true);
         _gridPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
-
+        
         _gridPane.setOnKeyPressed(t -> {
             // TODO move to behavior, when (or if) this class becomes a SkinBase
             if (t.getCode() == KeyCode.ENTER ||

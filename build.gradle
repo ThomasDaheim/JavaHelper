@@ -40,7 +40,7 @@ if (!hasProperty('mainClass')) {
 }
 mainClassName = 'tf.helper.test.TestGridComboBox'
 group='tf.JavaHelper'
-version='1.5'
+version='1.6'
 
 repositories {
     mavenLocal()

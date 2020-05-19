@@ -127,12 +127,15 @@ public class TestGridComboBox extends Application {
         comboBox23.add(new Label("Test #7"), 0, 0);
         comboBox23.add(new Label("Test #8"), 1, 0);
         comboBox23.add(new Label("Test #9"), 0, 1, 2, 1);
-        comboBox23.add(new Label("Test #10"), 0, 2);
-        comboBox23.add(new Label("Test #11"), 0, 3);
-        comboBox23.add(new Label("Test #12"), 0, 4);
-        comboBox23.add(new Label("Test #13"), 0, 5);
-        comboBox23.add(new Label("Test #14"), 1, 5);
-        comboBox23.add(new Label("Test #15"), 2, 5);
+        final Label label = new Label("Header");
+        label.setDisable(true);
+        comboBox23.add(label, 0, 2, 3, 1);
+        comboBox23.add(new Label("Test #10"), 0, 3);
+        comboBox23.add(new Label("Test #11"), 0, 4);
+        comboBox23.add(new Label("Test #12"), 0, 5);
+        comboBox23.add(new Label("Test #13"), 0, 6);
+        comboBox23.add(new Label("Test #14"), 1, 6);
+        comboBox23.add(new Label("Test #15"), 2, 6);
         comboBox23.setValue("Test #10");
         
         hBox2.getChildren().addAll(comboBox21, comboBox22, comboBox23);
