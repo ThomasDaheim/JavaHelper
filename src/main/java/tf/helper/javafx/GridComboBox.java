@@ -131,10 +131,24 @@ public class GridComboBox<T extends Node> extends ComboBox<String> {
     
     /**************************************************************************
      * 
+     * Helper methods
+     * 
+     **************************************************************************/
+    
+    public void scrollTo(T node) {
+        gridComboBoxSkin.scrollTo(node);
+    }
+
+    /**************************************************************************
+     * 
      * GridPane methods - only forward to GridComboBoxSkin
      * 
      **************************************************************************/
     
+    public final ObservableList<T> getGridItems() {
+        return gridComboBoxSkin.getGridItems();
+    }
+
     public final DoubleProperty hgapProperty() {
         return gridComboBoxSkin.hgapProperty();
     }
@@ -189,6 +203,10 @@ public class GridComboBox<T extends Node> extends ComboBox<String> {
 
     public final ObservableList<ColumnConstraints> getColumnConstraints() {
         return gridComboBoxSkin.getColumnConstraints();
+    }
+
+    public void add(T node) {
+        gridComboBoxSkin.add(node);
     }
 
     public void add(T node, int i, int i1) {

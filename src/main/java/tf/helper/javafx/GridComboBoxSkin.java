@@ -382,10 +382,24 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
     
     /**************************************************************************
      * 
+     * Helper methods
+     * 
+     **************************************************************************/
+    
+    public void scrollTo(T node) {
+        // TODO: calculate Vvaleu of the scroll pane for a given node
+    }
+
+    /**************************************************************************
+     * 
      * GridPane methods - only forward to internal GridPane
      * 
      **************************************************************************/
     
+    public final ObservableList<T> getGridItems() {
+        return gridItems;
+    }
+
     public final DoubleProperty hgapProperty() {
         return myGridPane.hgapProperty();
     }
@@ -440,6 +454,13 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
 
     public final ObservableList<ColumnConstraints> getColumnConstraints() {
         return myGridPane.getColumnConstraints();
+    }
+
+    public void add(T node) {
+        // add in a new row at the end
+        int rows = myGridPane.getRowCount();
+        add(node, 0, rows+1);
+        initAndAddNode(node);
     }
 
     public void add(T node, int i, int i1) {
