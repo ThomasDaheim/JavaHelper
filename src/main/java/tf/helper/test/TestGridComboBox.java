@@ -124,6 +124,7 @@ public class TestGridComboBox extends Application {
         comboBox23.setGridConverter(GridComboBox.labelStringConverter());
         comboBox23.setEditable(true);
         comboBox23.setGridLinesVisible(true);
+        comboBox23.setVisibleRowCount(100);
         comboBox23.add(new Label("Test #7"), 0, 0);
         comboBox23.add(new Label("Test #8"), 1, 0);
         comboBox23.add(new Label("Test #9"), 0, 1, 2, 1);

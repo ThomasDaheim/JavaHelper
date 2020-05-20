@@ -6,6 +6,8 @@
 package tf.helper.javafx;
 
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,6 +21,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -52,6 +55,8 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
     private final GridComboBox<T> myComboBox;
     private final ScrollPane myScrollPane;
     private final GridPane myGridPane;
+    // GridPane.getGrid() isn't publicly available
+    // https://stackoverflow.com/a/52648828 proposes to listen to width / height changes of nodes to track row/column sizes
     private final ListView<String> myListView;
     
     // data
@@ -227,6 +232,28 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
         });
     }
     
+    private static double[][] getCurrentGrid(final GridPane gp) {
+        double[][] ret=new double [0][0];
+
+        try {
+            final Method m = gp.getClass().getDeclaredMethod("getGrid");
+            m.setAccessible(true);
+            ret = (double[][]) m.invoke(gp);
+
+            if (ret == null) {
+                // no layout pass yet?
+                gp.applyCss();
+                gp.layout();
+                
+                ret = (double[][]) m.invoke(gp);
+            }
+        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
+            Logger.getLogger(GridComboBoxSkin.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return ret;
+    }
+
     private GridPane createGridPane() {
         final GridPane _gridPane = new GridPane();
 
@@ -235,6 +262,7 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
         _gridPane.setFocusTraversable(false);
         _gridPane.setSnapToPixel(true);
         _gridPane.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        _gridPane.setPadding(Insets.EMPTY);
         
         _gridPane.setOnKeyPressed(t -> {
             // TODO move to behavior, when (or if) this class becomes a SkinBase
@@ -271,17 +299,30 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
             }
 
             @Override protected double computePrefHeight(double width) {
-                return Math.min(myGridPane.getRowCount() * 30, 100);
+                // use row height & visibleRowCount to calculate pref height
+                final double[] rowHeights = GridComboBoxSkin.getCurrentGrid(myGridPane)[1];
+                int prefHeight = 0;
+                final int maxRows = Math.min(myGridPane.getRowCount(), myComboBox.getVisibleRowCount());
+                for (int i = 0; i < maxRows; i++) {
+                    prefHeight += rowHeights[i];
+                }
+                // add now add the vgaps to the height - if any
+                prefHeight += myGridPane.getVgap() * Math.min(maxRows-1, 0);
+                
+                return Math.min(prefHeight, 600);
+                
+//                return Math.min(myGridPane.getRowCount() * 30, 160);
             }
 
             @Override protected double computeMaxHeight(double width) {
-                return Math.min(myGridPane.getRowCount() * 30, 100);
+                return computePrefHeight(width);
             }
         };
         
         _scrollPane.setFitToWidth(true);
         _scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         _scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        _scrollPane.setPadding(Insets.EMPTY);
 
         _scrollPane.setId("scroll-pane");
         _scrollPane.setFocusTraversable(false);
