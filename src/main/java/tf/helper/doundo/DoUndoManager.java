@@ -53,16 +53,19 @@ public class DoUndoManager implements IDoUndoStack {
         // see http://robertmarkbramprogrammer.blogspot.com/2013/03/nulls-and-varargs.html for what to expect
         if (key == null) {
             System.out.println("DoUndoManager called with null key");
+            Thread.dumpStack();
             return false;
         }
         if (key.length != 1 || key[0] == null) {
             System.out.println("DoUndoManager called with incorrect key array: " + key + ", " + key.length);
+            Thread.dumpStack();
             return false;
         }
         if (mustExist && !stackMap.containsKey(key[0])) {
             if (nonExistMessage) {
                 // no message on case of canDo()... calls to avoid that the callers have to check first if we have any do/undo stack at all for a key
                 System.out.println("DoUndoManager called for non-existing key: " + key[0]);
+                Thread.dumpStack();
             }
             return false;
         }
