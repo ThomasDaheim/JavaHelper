@@ -26,15 +26,20 @@
 package tf.helper.test;
 
 import javafx.application.Application;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -108,6 +113,13 @@ public class TestGridComboBox extends Application {
         comboBox21.add(new Label("Test #2"), 0, 1);
         comboBox21.add(new Label("Test #3"), 0, 2);
         comboBox21.setValue("Test #1");
+        ColumnConstraints column21 = new ColumnConstraints();
+        column21.setHgrow(Priority.ALWAYS);
+        comboBox21.getColumnConstraints().addAll(column21);
+        comboBox21.getGridItems().forEach((node) -> {
+            GridPane.setHgrow(node, Priority.ALWAYS);
+            GridPane.setHalignment(node, HPos.CENTER);
+        });
         
         final GridComboBox<Label> comboBox22 = new GridComboBox<>();
         comboBox22.setGridConverter(GridComboBox.labelStringConverter());
@@ -119,12 +131,19 @@ public class TestGridComboBox extends Application {
         comboBox22.add(new Label("6"), 0, 4);
         comboBox22.getItems().add("c");
         comboBox22.setValue("4");
+        ColumnConstraints column22 = new ColumnConstraints();
+        column22.setHgrow(Priority.ALWAYS);
+        comboBox22.getColumnConstraints().addAll(column22);
+        comboBox22.getGridItems().forEach((node) -> {
+            GridPane.setHgrow(node, Priority.ALWAYS);
+        });
         
         final GridComboBox<Label> comboBox23 = new GridComboBox<>();
         comboBox23.setGridConverter(GridComboBox.labelStringConverter());
         comboBox23.setEditable(true);
         comboBox23.setGridLinesVisible(true);
         comboBox23.setVisibleRowCount(100);
+        comboBox23.setResizeContentColumnSpan(true);
         comboBox23.add(new Label("Test #7"), 0, 0);
         comboBox23.add(new Label("Test #8"), 1, 0);
         comboBox23.add(new Label("Test #9"), 0, 1, 2, 1);
@@ -138,6 +157,16 @@ public class TestGridComboBox extends Application {
         comboBox23.add(new Label("Test #14"), 1, 6);
         comboBox23.add(new Label("Test #15"), 2, 6);
         comboBox23.setValue("Test #10");
+        ColumnConstraints column231 = new ColumnConstraints();
+        column231.setHgrow(Priority.ALWAYS);
+        ColumnConstraints column232 = new ColumnConstraints();
+        column232.setHgrow(Priority.ALWAYS);
+        ColumnConstraints column233 = new ColumnConstraints();
+        column233.setHgrow(Priority.ALWAYS);
+        comboBox23.getColumnConstraints().addAll(column231, column232, column233);
+        comboBox23.getGridItems().forEach((node) -> {
+            GridPane.setHgrow(node, Priority.ALWAYS);
+        });
         
         hBox2.getChildren().addAll(comboBox21, comboBox22, comboBox23);
 

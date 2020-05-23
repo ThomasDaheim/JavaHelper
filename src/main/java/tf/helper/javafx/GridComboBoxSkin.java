@@ -6,8 +6,6 @@
 package tf.helper.javafx;
 
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -34,6 +32,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.util.StringConverter;
 
@@ -42,7 +41,7 @@ import javafx.util.StringConverter;
  * @author t.feuster
  * @param <T>
  */
-public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<String> {
+public class GridComboBoxSkin<T extends Region> extends ComboBoxListViewSkin<String> {
     // These three pseudo class states are duplicated from Cell
     private static final PseudoClass PSEUDO_CLASS_SELECTED =
             PseudoClass.getPseudoClass("selected");
@@ -54,7 +53,7 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
     // visuals
     private final GridComboBox<T> myComboBox;
     private final ScrollPane myScrollPane;
-    private final GridPane myGridPane;
+    private final GridComboBoxPane<T> myGridPane;
     // GridPane.getGrid() isn't publicly available
     // https://stackoverflow.com/a/52648828 proposes to listen to width / height changes of nodes to track row/column sizes
     private final ListView<String> myListView;
@@ -173,7 +172,7 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
                             // insert before any other items
                             row = 0;
                         }
-                        myGridPane.addRow(row, node);
+                        myGridPane.addRow(row, new Node[] {node});
                     }
                 }
                 if (c.wasRemoved()) {
@@ -231,31 +230,9 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
             }
         });
     }
-    
-    private static double[][] getCurrentGrid(final GridPane gp) {
-        double[][] ret=new double [0][0];
 
-        try {
-            final Method m = gp.getClass().getDeclaredMethod("getGrid");
-            m.setAccessible(true);
-            ret = (double[][]) m.invoke(gp);
-
-            if (ret == null) {
-                // no layout pass yet?
-                gp.applyCss();
-                gp.layout();
-                
-                ret = (double[][]) m.invoke(gp);
-            }
-        } catch (IllegalAccessException | IllegalArgumentException | NoSuchMethodException | SecurityException | InvocationTargetException ex) {
-            Logger.getLogger(GridComboBoxSkin.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return ret;
-    }
-
-    private GridPane createGridPane() {
-        final GridPane _gridPane = new GridPane();
+    private GridComboBoxPane<T> createGridPane() {
+        final GridComboBoxPane<T> _gridPane = new GridComboBoxPane<>(this);
 
         _gridPane.setId("grid-pane");
         _gridPane.getStyleClass().add("grid-pane");
@@ -300,7 +277,7 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
 
             @Override protected double computePrefHeight(double width) {
                 // use row height & visibleRowCount to calculate pref height
-                final double[] rowHeights = GridComboBoxSkin.getCurrentGrid(myGridPane)[1];
+                final double[] rowHeights = myGridPane.getGrid()[1];
                 int prefHeight = 0;
                 final int maxRows = Math.min(myGridPane.getRowCount(), myComboBox.getVisibleRowCount());
                 for (int i = 0; i < maxRows; i++) {
@@ -528,8 +505,9 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
         return myGridPane.getContentBias();
     }
 
+    @Override
     public String toString() {
-        return "";
+        return super.toString();
     }
 
     public final int getRowCount() {
@@ -543,4 +521,26 @@ public class GridComboBoxSkin<T extends Node> extends ComboBoxListViewSkin<Strin
     public final Bounds getCellBounds(int i, int i1) {
         return myGridPane.getCellBounds(i, i1);
     }
+
+    /**************************************************************************
+     * 
+     * GridComboBoxPane methods - only forward to internal GridComboBoxPane
+     * 
+     **************************************************************************/
+    
+    public final BooleanProperty resizeContentRow() { return myGridPane.resizeContentRow(); }
+    public final void setResizeContentRow(boolean bln) { myGridPane.setResizeContentRow(bln); }
+    public final boolean getResizeContentRow() { return myGridPane.getResizeContentRow(); }
+
+    public final BooleanProperty resizeContentRowSpan() { return myGridPane.resizeContentRowSpan(); }
+    public final void setResizeContentRowSpan(boolean bln) { myGridPane.setResizeContentRowSpan(bln); }
+    public final boolean getResizeContentRowSpan() { return myGridPane.getResizeContentRowSpan(); }
+
+    public final BooleanProperty resizeContentColumn() { return myGridPane.resizeContentColumn(); }
+    public final void setResizeContentColumn(boolean bln) { myGridPane.setResizeContentColumn(bln); }
+    public final boolean getResizeContentColumn() { return myGridPane.getResizeContentColumn(); }
+
+    public final BooleanProperty resizeContentColumnSpan() { return myGridPane.resizeContentColumnSpan(); }
+    public final void setResizeContentColumnSpan(boolean bln) { myGridPane.setResizeContentColumnSpan(bln); }
+    public final boolean getResizeContentColumnSpan() { return myGridPane.getResizeContentColumnSpan(); }
 }

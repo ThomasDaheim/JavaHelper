@@ -39,6 +39,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.RowConstraints;
 import javafx.util.StringConverter;
 
@@ -66,7 +67,7 @@ import javafx.util.StringConverter;
  * @author thomas
  * @param <T>
  */
-public class GridComboBox<T extends Node> extends ComboBox<String> {
+public class GridComboBox<T extends Region> extends ComboBox<String> {
 
     private final boolean styleSheetAdded = getStylesheets().add(GridComboBox.class .getResource("/GridComboBox.css").toExternalForm());
     
@@ -241,4 +242,26 @@ public class GridComboBox<T extends Node> extends ComboBox<String> {
     public final Bounds getCellBounds(int i, int i1) {
         return gridComboBoxSkin.getCellBounds(i, i1);
     }
+
+    /**************************************************************************
+     * 
+     * GridComboBoxPane methods - only forward to GridComboBoxSkin
+     * 
+     **************************************************************************/
+    
+    public final BooleanProperty resizeContentRow() { return gridComboBoxSkin.resizeContentRow(); }
+    public final void setResizeContentRow(boolean bln) { gridComboBoxSkin.setResizeContentRow(bln); }
+    public final boolean getResizeContentRow() { return gridComboBoxSkin.getResizeContentRow(); }
+
+    public final BooleanProperty resizeContentRowSpan() { return gridComboBoxSkin.resizeContentRowSpan(); }
+    public final void setResizeContentRowSpan(boolean bln) { gridComboBoxSkin.setResizeContentRowSpan(bln); }
+    public final boolean getResizeContentRowSpan() { return gridComboBoxSkin.getResizeContentRowSpan(); }
+
+    public final BooleanProperty resizeContentColumn() { return gridComboBoxSkin.resizeContentColumn(); }
+    public final void setResizeContentColumn(boolean bln) { gridComboBoxSkin.setResizeContentColumn(bln); }
+    public final boolean getResizeContentColumn() { return gridComboBoxSkin.getResizeContentColumn(); }
+
+    public final BooleanProperty resizeContentColumnSpan() { return gridComboBoxSkin.resizeContentColumnSpan(); }
+    public final void setResizeContentColumnSpan(boolean bln) { gridComboBoxSkin.setResizeContentColumnSpan(bln); }
+    public final boolean getResizeContentColumnSpan() { return gridComboBoxSkin.getResizeContentColumnSpan(); }
 }
