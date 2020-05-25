@@ -277,11 +277,11 @@ public class GridComboBoxSkin<T extends Region> extends ComboBoxListViewSkin<Str
 
             @Override protected double computePrefHeight(double width) {
                 // use row height & visibleRowCount to calculate pref height
-                final double[] rowHeights = myGridPane.getGrid()[1];
+                final double[] rowSizes = myGridPane.getGrid()[1];
                 int prefHeight = 0;
                 final int maxRows = Math.min(myGridPane.getRowCount(), myComboBox.getVisibleRowCount());
                 for (int i = 0; i < maxRows; i++) {
-                    prefHeight += rowHeights[i];
+                    prefHeight += rowSizes[i];
                 }
                 // add now add the vgaps to the height - if any
                 prefHeight += myGridPane.getVgap() * Math.min(maxRows-1, 0);

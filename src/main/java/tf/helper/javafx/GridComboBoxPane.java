@@ -71,6 +71,8 @@ public class GridComboBoxPane<T extends Region> extends GridPane {
     // know your skin - you never know what it can be used for
     private final GridComboBoxSkin<T> mySkin;
     
+    private boolean firstPassDone = false;
+    
     public GridComboBoxPane(final GridComboBoxSkin<T> skin) {
         super();
         
@@ -124,21 +126,29 @@ public class GridComboBoxPane<T extends Region> extends GridPane {
     // adapt layout to resize cells to row/col size 
     @Override 
     protected void layoutChildren() {
-        // iterate of children and reset prefWidth/Height based on boolean flags 
+        // TODO: more complex logic needed in case of changes to items?
+        if (!firstPassDone) {
+            super.layoutChildren();
+            firstPassDone = true;
+            return;
+        }
+        
+        // set all width values for children
         final List<Node> children = new ArrayList<>(getChildren());
         for (Node node: children) {
             // gridlines are stored in a Group...
             if (!Group.class.equals(node.getClass())) {
+                final Region region = ObjectsHelper.uncheckedCast(node);
                 if (origSizes.containsKey(node)) {
                     // was already their in last layout run - use stored height/width
-                    final Region region = ObjectsHelper.uncheckedCast(node);
                     final Pair<Double, Double> sizes = origSizes.get(node);
-                    region.setPrefHeight(sizes.getLeft());
-                    region.setPrefWidth(sizes.getRight());
+                    setRegionWidthHeight(region, sizes.getLeft(), sizes.getRight());
+                    System.out.println("Resizing " + node + " back to " + sizes.getLeft() + ", " + sizes.getRight());
                 } else {
                     // new node - store height/width
-                    final Region region = ObjectsHelper.uncheckedCast(node);
-                    origSizes.put(node, Pair.of(region.getPrefHeight(), region.getPrefWidth()));
+                    origSizes.put(node, Pair.of(region.getPrefWidth(), region.getPrefHeight()));
+                    setRegionWidthHeight(region, region.getPrefWidth(), region.getPrefHeight());
+                    System.out.println("Saving " + node + " as " + region.getPrefWidth() + ", " + region.getPrefHeight());
                 }
             }
         }
@@ -146,9 +156,98 @@ public class GridComboBoxPane<T extends Region> extends GridPane {
         // paint the grid to have new row/col sizes
         super.layoutChildren();
         
-        // TODO: iterate of children and set prefWidth/Height based on boolean flags
+        if (getChildren().isEmpty()) {
+            // no children - nothing to layout
+            return;
+        }
+        
+        // iterate of children and set prefWidth/Height based on boolean flags
+        final double [][] gridSizes = getGrid();
+        final double [] rowSizes = gridSizes[1];
+        final double [] columnSizes = gridSizes[0];
+        
+        if (columnSizes.length == 0 || rowSizes.length == 0) {
+            // no values for rows / cols - nothing to calculate
+            return;
+        }
+        double totalWidth = 0.0;
+        for (int i = 0; i < columnSizes.length; i++) {
+            totalWidth += columnSizes[i];
+        }
+        double totalHeight = 0.0;
+        for (int i = 0; i < rowSizes.length; i++) {
+            totalHeight += rowSizes[i];
+        }
+        if (totalWidth == 0.0 || totalHeight == 0.0) {
+            // no values for rows / cols - nothing to calculate
+            return;
+        }
+        
+        boolean needsLayout = false;
+        if (getResizeContentRow() || getResizeContentRowSpan() || getResizeContentColumn() || getResizeContentColumnSpan()) {
+            for (Node node: children) {
+                // gridlines are stored in a Group...
+                if (!Group.class.equals(node.getClass())) {
+                    final Region region = ObjectsHelper.uncheckedCast(node);
+
+                    final int rowIndex = GridPane.getRowIndex(node);
+                    final int columnIndex = GridPane.getColumnIndex(node);
+                    Integer nullCheck = GridPane.getRowSpan(node);
+                    final int rowSpan = nullCheck != null ? nullCheck : 1;
+                    nullCheck = GridPane.getColumnSpan(node);
+                    final int columnSpan = nullCheck != null ? nullCheck : 1;
+
+                    final double curWidth = region.getPrefWidth();
+                    double newWidth = curWidth;
+                    final double curHeight = region.getPrefHeight();
+                    double newHeight = curHeight;
+                    boolean doResize = false;
+                    if (getResizeContentColumn() || (getResizeContentColumnSpan() && columnSpan > 1)) {
+                        // calc new width
+                        newWidth = 0.0;
+                        for (int i = columnIndex; i < columnIndex+columnSpan; i++) {
+                            newWidth += columnSizes[i];
+                        }
+                        if (newWidth == -1.0) {
+                            newWidth = curWidth;
+                        } else if (newWidth != curWidth) {
+                            doResize = true;
+                        }
+                    }
+                    if (getResizeContentRow() || (getResizeContentRowSpan() && rowSpan > 1)) {
+                        // calc new height
+                        newHeight = 0.0;
+                        for (int i = rowIndex; i < rowIndex+rowSpan; i++) {
+                            newHeight += rowSizes[i];
+                        }
+                        if (newHeight == -1.0) {
+                            newHeight = curHeight;
+                        } else if (newHeight != curHeight) {
+                            doResize = true;
+                        }
+                    }
+                    if (doResize) {
+                        setRegionWidthHeight(region, newWidth, newHeight);
+                        System.out.println("Resizing " + node + " from " + curWidth + ", " + curHeight + " to " + newWidth + ", " + newHeight);
+                        needsLayout = true;
+                    }
+                }
+            }
+        }
+        
         
         // repaint the grid
-        super.layoutChildren();
+        if (needsLayout) {
+            super.layoutChildren();
+        }
+    }
+    
+    private void setRegionWidthHeight(final Region region, final double width, final double height) {
+        region.setPrefWidth(width);
+        region.setMinWidth(width);
+        region.setMaxWidth(width);
+        region.setPrefHeight(height);
+        region.setMinHeight(height);
+        region.setMaxHeight(height);
     }
 }
