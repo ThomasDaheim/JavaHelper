@@ -106,6 +106,8 @@ public class TestGridComboBox extends Application {
         
         final GridComboBox<Label> comboBox21 = new GridComboBox<>();
         comboBox21.setEditable(true);
+        comboBox21.setResizeContentColumn(true);
+        comboBox21.setGridLinesVisible(true);
         comboBox21.setGridConverter(GridComboBox.labelStringConverter());
         comboBox21.add(new Label("Test #1"), 0, 0);
         comboBox21.add(new Label("Test #2"), 0, 1);
@@ -121,6 +123,7 @@ public class TestGridComboBox extends Application {
         
         final GridComboBox<Label> comboBox22 = new GridComboBox<>();
         comboBox22.setGridConverter(GridComboBox.labelStringConverter());
+        comboBox22.setResizeContentColumn(true);
         comboBox22.setEditable(false);
         comboBox22.add(new Label("4"), 0, 0);
         comboBox22.getItems().add("a");
@@ -139,7 +142,6 @@ public class TestGridComboBox extends Application {
         final GridComboBox<Label> comboBox23 = new GridComboBox<>();
         comboBox23.setGridConverter(GridComboBox.labelStringConverter());
         comboBox23.setEditable(true);
-//        comboBox23.setGridLinesVisible(true);
         comboBox23.setHgap(0.0);
         comboBox23.setVgap(0.0);
         comboBox23.setVisibleRowCount(100);

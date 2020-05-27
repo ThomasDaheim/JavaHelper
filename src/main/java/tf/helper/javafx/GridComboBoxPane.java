@@ -55,23 +55,24 @@ import tf.helper.general.ObjectsHelper;
  * @param <T>
  */
 public class GridComboBoxPane<T extends Region> extends GridPane {
-    
     // boolean if grid content should be resized to match its row height
-    private final BooleanProperty resizeContentRow = new SimpleBooleanProperty(false);
+    // default is TRUE to have same behaviour as normal ComboBox: full height of row is highlighted
+    private final BooleanProperty resizeContentRow = new SimpleBooleanProperty(true);
     // boolean if multi-row grid content should be resized to match its rows height
-    private final BooleanProperty resizeContentRowSpan = new SimpleBooleanProperty(false);
+    // default is TRUE to have same behaviour as normal ComboBox: full height of rows is highlighted
+    private final BooleanProperty resizeContentRowSpan = new SimpleBooleanProperty(true);
     // boolean if grid content should be resized to match its column width
-    private final BooleanProperty resizeContentColumn = new SimpleBooleanProperty(false);
+    // default is TRUE to have same behaviour as normal ComboBox: full width of column is highlighted
+    private final BooleanProperty resizeContentColumn = new SimpleBooleanProperty(true);
     // boolean if multi-column grid content should be resized to match its columns width
-    private final BooleanProperty resizeContentColumnSpan = new SimpleBooleanProperty(false);
+    // default is TRUE to have same behaviour as normal ComboBox: full width of columns is highlighted
+    private final BooleanProperty resizeContentColumnSpan = new SimpleBooleanProperty(true);
     
     // map to hold orig height/width values of the items
     private Map<Node, Pair<Double, Double>> origSizes = new HashMap<>();
     
     // know your skin - you never know what it can be used for
     private final GridComboBoxSkin<T> mySkin;
-    
-    private boolean firstPassDone = false;
     
     public GridComboBoxPane(final GridComboBoxSkin<T> skin) {
         super();
@@ -126,13 +127,6 @@ public class GridComboBoxPane<T extends Region> extends GridPane {
     // adapt layout to resize cells to row/col size 
     @Override 
     protected void layoutChildren() {
-        // TODO: more complex logic needed in case of changes to items?
-        if (!firstPassDone) {
-            super.layoutChildren();
-            firstPassDone = true;
-            return;
-        }
-        
         // set all width values for children
         final List<Node> children = new ArrayList<>(getChildren());
         for (Node node: children) {
@@ -143,12 +137,12 @@ public class GridComboBoxPane<T extends Region> extends GridPane {
                     // was already their in last layout run - use stored height/width
                     final Pair<Double, Double> sizes = origSizes.get(node);
                     setRegionWidthHeight(region, sizes.getLeft(), sizes.getRight());
-                    System.out.println("Resizing " + node + " back to " + sizes.getLeft() + ", " + sizes.getRight());
+//                    System.out.println("Resizing " + node + " back to " + sizes.getLeft() + ", " + sizes.getRight());
                 } else {
                     // new node - store height/width
                     origSizes.put(node, Pair.of(region.getPrefWidth(), region.getPrefHeight()));
                     setRegionWidthHeight(region, region.getPrefWidth(), region.getPrefHeight());
-                    System.out.println("Saving " + node + " as " + region.getPrefWidth() + ", " + region.getPrefHeight());
+//                    System.out.println("Saving " + node + " as " + region.getPrefWidth() + ", " + region.getPrefHeight());
                 }
             }
         }
@@ -228,7 +222,7 @@ public class GridComboBoxPane<T extends Region> extends GridPane {
                     }
                     if (doResize) {
                         setRegionWidthHeight(region, newWidth, newHeight);
-                        System.out.println("Resizing " + node + " from " + curWidth + ", " + curHeight + " to " + newWidth + ", " + newHeight);
+//                        System.out.println("Resizing " + node + " from " + curWidth + ", " + curHeight + " to " + newWidth + ", " + newHeight);
                         needsLayout = true;
                     }
                 }

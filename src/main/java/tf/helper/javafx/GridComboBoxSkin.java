@@ -211,22 +211,31 @@ public class GridComboBoxSkin<T extends Region> extends ComboBoxListViewSkin<Str
                 return;
             }
             
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    for (String string : c.getAddedSubList()) {
-                        // set pseudostyleclass selected
-                        final T node = gridItems.get(stringItems.indexOf(string));
-                        node.pseudoClassStateChanged(PSEUDO_CLASS_SELECTED, true);
-                        
-                    }
-                }
-                if (c.wasRemoved()) {
-                    for (String string : c.getRemoved()) {
-                        // set pseudostyleclass unselected
-                        final T node = gridItems.get(stringItems.indexOf(string));
-                        node.pseudoClassStateChanged(PSEUDO_CLASS_SELECTED, false);
-                    }
-                }
+            // There seems to be no "unselect" in case of changing the text in an editable combobox...
+            // So we don't follow the wasAdded() / wasRemoved() trail
+//            while (c.next()) {
+//                if (c.wasAdded()) {
+//                    for (String string : c.getAddedSubList()) {
+//                        // set pseudostyleclass selected
+//                        final T node = gridItems.get(stringItems.indexOf(string));
+//                        node.pseudoClassStateChanged(PSEUDO_CLASS_SELECTED, true);
+//                        
+//                    }
+//                }
+//                if (c.wasRemoved()) {
+//                    for (String string : c.getRemoved()) {
+//                        // set pseudostyleclass unselected
+//                        final T node = gridItems.get(stringItems.indexOf(string));
+//                        node.pseudoClassStateChanged(PSEUDO_CLASS_SELECTED, false);
+//                    }
+//                }
+//            }
+            // instead we simply allways iterate over the whole selection and set/unset selected pseudoclass
+            final List<String> selectedItems = myListView.getSelectionModel().getSelectedItems();
+            
+            for (String itemName : stringItems) {
+                final T node = gridItems.get(stringItems.indexOf(itemName));
+                node.pseudoClassStateChanged(PSEUDO_CLASS_SELECTED, selectedItems.indexOf(itemName) > -1);
             }
         });
     }

@@ -35,7 +35,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -46,7 +45,11 @@ import javafx.util.StringConverter;
 /**
  * ComboBox that show a GridPane as popup. 
  * To this end the skin GridComboBoxSkin implements a getPopUp() the returns a GridPane which
- * contains the items.
+ * contains the items. Minimum requirement for an item is to be a Region - this is needed for 
+ * automatic scaling of width & height to have same behaviour as a normal ComboBox: the full row & col is highlighted
+ * in case of mouse-over or selection and not only the size of the region contained in the GridPane "cell".
+ * This resizing needs to be done manually since the GridPane doesn't consist of individual cells that can be styled put places
+ * its items directly on the canvas.
  * 
  * Design decissions: A ComboBox offers get/setItem() methods to add content to the PopUp. But using those methods 
  * the full functionality of the underlying GridPane can't be used easily. The caller would need to call various static 
