@@ -130,4 +130,14 @@ public abstract class AbstractDoUndoAction implements IDoUndoAction {
         // we don't hold a grunge after a failed undo() and are not STUCK_IN_UNDO
         return getStateFromCounter();
     }
+    
+    // maybe action has been done "outside" of our tracking - e.g. if a DoUndoActionList
+    protected final void setDoneCount(final int count) {
+        doneCount = count;
+    }
+    
+    // maybe action has been done "outside" of our tracking - e.g. if a DoUndoActionList
+    protected final void setUndoneCount(final int count) {
+        undoneCount = count;
+    }
 }
