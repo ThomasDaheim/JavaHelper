@@ -197,8 +197,15 @@ public class DoUndoActionList extends AbstractDoUndoAction {
 
     @Override
     public String getDescription() {
-        // TODO: concat descriptions of actions
-        return "NOT YET IMPLEMENTED";
+        // concat descriptions of actions
+        String result = "";
+        for (IDoUndoAction action : myActions) {
+            if (!result.isEmpty()) {
+                result += System.lineSeparator();
+            }
+            result += action.getDescription();
+        }
+        return result;
     }
     
     public void setDoneCountFromActions() {
