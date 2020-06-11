@@ -36,9 +36,9 @@ ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'wi
 // prefer. In this case NetBeans will not add these tasks but you may rely on
 // your own implementation.
 if (!hasProperty('mainClass')) {
-    ext.mainClass = 'tf.helper.test.TestGridComboBox'
+    ext.mainClass = 'tf.helper.test.TestWebView'
 }
-mainClassName = 'tf.helper.test.TestGridComboBox'
+mainClassName = 'tf.helper.test.TestWebView'
 group='tf.JavaHelper'
 version='1.6'
 
