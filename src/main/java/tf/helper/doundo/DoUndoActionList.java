@@ -197,7 +197,50 @@ public class DoUndoActionList extends AbstractDoUndoAction {
 
     @Override
     public String getDescription() {
-        // TODO: concat descriptions of actions
-        return "NOT YET IMPLEMENTED";
+        // concat descriptions of actions
+        String result = "";
+        for (IDoUndoAction action : myActions) {
+            if (!result.isEmpty()) {
+                result += System.lineSeparator();
+            }
+            result += action.getDescription();
+        }
+        return result;
+    }
+    
+    public void setDoneCountFromActions() {
+        // iterate over my actions and check how often they have been done
+        // if all have same value, use it as my count
+        int count = -1;
+        for (IDoUndoAction action : myActions) {
+            if (count == -1) {
+                count = action.doneCount();
+            } else if (count != action.doneCount()) {
+                count = -1;
+                break;
+            }
+        }
+        
+        if (count != -1) {
+            setDoneCount(count);
+        }
+    }
+    
+    public void setUndoneCountFromActions() {
+        // iterate over my actions and check how often they have been undone
+        // if all have same value, use it as my count
+        int count = -1;
+        for (IDoUndoAction action : myActions) {
+            if (count == -1) {
+                count = action.undoneCount();
+            } else if (count != action.undoneCount()) {
+                count = -1;
+                break;
+            }
+        }
+        
+        if (count != -1) {
+            setUndoneCount(count);
+        }
     }
 }

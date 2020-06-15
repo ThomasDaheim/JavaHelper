@@ -256,7 +256,7 @@ public class TestDoUndoActions {
             hasException = true;
         }
         Assert.assertFalse(result);
-        Assert.assertTrue(hasException);
+        Assert.assertFalse(hasException);
         
         
         try {
@@ -266,7 +266,7 @@ public class TestDoUndoActions {
             hasException = true;
         }
         Assert.assertFalse(result);
-        Assert.assertTrue(hasException);
+        Assert.assertFalse(hasException);
         
         try {
             result = actionList.doAction();
@@ -275,6 +275,6 @@ public class TestDoUndoActions {
             hasException = true;
         }
         Assert.assertFalse(result);
-        Assert.assertTrue(hasException);
+        Assert.assertFalse(hasException);
     }
 }
