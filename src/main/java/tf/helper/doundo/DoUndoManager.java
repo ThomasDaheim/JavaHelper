@@ -111,7 +111,7 @@ public class DoUndoManager implements IDoUndoStack {
     @Override
     public boolean clear(String... key) {
         // TFE, 20200607: clear without any stack is also OK
-        if (!verifyKey(false, true, key)) {
+        if (!verifyKey(true, false, key)) {
             return false;
         }
         
