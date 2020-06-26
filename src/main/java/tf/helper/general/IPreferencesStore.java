@@ -25,6 +25,9 @@
  */
 package tf.helper.general;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 /**
  *
  * @author thomas
@@ -33,4 +36,10 @@ public interface IPreferencesStore {
     public abstract String get(final String key, final String defaultValue);
     
     public abstract void put(final String key, final String value);
+    
+    public abstract void clear();
+    
+    public abstract void exportSubtree(OutputStream os);
+    
+    public abstract void importPreferences(InputStream is);
 }
