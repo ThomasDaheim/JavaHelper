@@ -53,15 +53,13 @@ public class ShowAlerts {
     
     // TF, 20160816: wrapper for alerts that stores the alert as long as its shown - needed for testing alerts with testfx
     public Optional<ButtonType> showAlert(final Alert.AlertType alertType, final String title, final String headerText, final String contentText, final ButtonType ... buttons) {
-        Alert result;
-        
-        result = new Alert(alertType);
+        final Alert alertWindow = new Alert(alertType);
         
         if (title != null) {
-            result.setTitle(title);
+            alertWindow.setTitle(title);
         }
         if (headerText != null) {
-            result.setHeaderText(headerText);
+            alertWindow.setHeaderText(headerText);
         }
         if (contentText != null) {
             // TFE, 20181006: use expandable content to display - otherwise alert box might be taller than the screen height...
@@ -71,13 +69,13 @@ public class ShowAlerts {
             textArea.setMaxWidth(Double.MAX_VALUE);
             textArea.setMaxHeight(Double.MAX_VALUE);
             
-            result.getDialogPane().setExpandableContent(textArea);
-            result.getDialogPane().setExpanded(true);
+            alertWindow.getDialogPane().setExpandableContent(textArea);
+            alertWindow.getDialogPane().setExpanded(true);
         }
         
         // add optional buttons
         if (buttons.length > 0) {
-            result.getButtonTypes().setAll(buttons);
+            alertWindow.getButtonTypes().setAll(buttons);
             
             // check if any button is of type CANCEL_CLOSE
             // otherwise: react to click on "X" ourselves
@@ -91,15 +89,15 @@ public class ShowAlerts {
             }
             if (!hasCancelClose) {
                 // check for click on "X"
-                final Window window = result.getDialogPane().getScene().getWindow();
-                window.setOnCloseRequest(e -> result.hide());
+                final Window window = alertWindow.getDialogPane().getScene().getWindow();
+                window.setOnCloseRequest(e -> alertWindow.hide());
                 
                 // check for ESCAPE
-                result.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent evt) -> {
+                alertWindow.getDialogPane().getScene().addEventFilter(KeyEvent.KEY_PRESSED, (KeyEvent evt) -> {
                     if (evt.getCode().equals(UsefulKeyCodes.ESCAPE.getKeyCodeCombination().getCode())) {
-                        // not working to hide result from within here
+                        // not working to hide alertWindow from within here
                         // prohibited by FXDialog source :-(
-//                        result.hide();
+//                        alertWindow.hide();
                         
                         window.fireEvent(
                             new WindowEvent(
@@ -113,8 +111,8 @@ public class ShowAlerts {
         }
         
         // get button pressed
-        Optional<ButtonType> buttonPressed = result.showAndWait();
-        result.close();
+        Optional<ButtonType> buttonPressed = alertWindow.showAndWait();
+        alertWindow.close();
         
         return buttonPressed;
     }
