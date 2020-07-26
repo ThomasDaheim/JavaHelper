@@ -23,7 +23,6 @@ idea {
     }
 }
 
-
 ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
@@ -39,6 +38,7 @@ if (!hasProperty('mainClass')) {
     ext.mainClass = 'tf.helper.test.TestWebView'
 }
 mainClassName = 'tf.helper.test.TestWebView'
+def appName='JavaHelper'
 group='tf.JavaHelper'
 version='1.7'
 
@@ -146,11 +146,20 @@ jar {
             'Created-By'     : "Gradle ${gradle.gradleVersion}",
             'Build-JDK'      : "${System.properties['java.version']} (${System.properties['java.vendor']} ${System.properties['java.vm.version']})",
             'Build-OS'       : "${System.properties['os.name']} ${System.properties['os.arch']} ${System.properties['os.version']}",
-            'App-Name'       : group,
+            'App-Name'       : appName,
             'App-Version'    : version,
             'App-URL'        : "https://github.com/ThomasDaheim/JavaHelper"
         )
     }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 build.finalizedBy(install)
