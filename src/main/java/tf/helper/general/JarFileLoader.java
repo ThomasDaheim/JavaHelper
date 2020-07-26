@@ -76,6 +76,10 @@ public class JarFileLoader {
             final String jarName = FilenameUtils.getName(f);
             
             final File directory = new File(jarDir);
+            // TFE, 20200726: whatever - there is no jar file under the "build" directory...
+            if (directory == null) {
+                return null;
+            }
             final Collection<File> jarFiles = FileUtils.listFiles(directory, new WildcardFileFilter(jarName), null);
             
             if (jarFiles.isEmpty()) {
