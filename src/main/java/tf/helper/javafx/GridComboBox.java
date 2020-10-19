@@ -123,10 +123,10 @@ public class GridComboBox<T extends Region> extends ComboBox<String> {
      * @return the converter property
      */
     public ObjectProperty<StringConverter<T>> gridConverterProperty() { return gridConverter; }
-    private ObjectProperty<StringConverter<T>> gridConverter =
+    private final ObjectProperty<StringConverter<T>> gridConverter =
             new SimpleObjectProperty<>(this, "gridConverter", defaultStringConverter());
     public final void setGridConverter(StringConverter<T> value) { gridConverterProperty().set(value); }
-    public final StringConverter<T> getGridConverter() {return gridConverterProperty().get(); }
+    public final StringConverter<T> getGridConverter() { return gridConverterProperty().get(); }
     
     @Override
     protected javafx.scene.control.Skin<?> createDefaultSkin() {

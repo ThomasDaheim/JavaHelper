@@ -57,7 +57,10 @@ public class ColorConverter {
     }
 
     public static String JavaFXtoCSS(final Color color) {
-        // kml uses alpha + BGR
-        return "#" + (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue())).toUpperCase();
+        return "#" + JavaFXtoRGBHex(color);
+    }
+
+    public static String JavaFXtoRGBHex(final Color color) {
+        return (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue())).toUpperCase();
     }
 }
