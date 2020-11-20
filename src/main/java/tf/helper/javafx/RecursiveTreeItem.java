@@ -27,6 +27,7 @@ package tf.helper.javafx;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -44,11 +45,13 @@ import javafx.util.Callback;
  * Based on https://lestard.eu/2015/treetable_datamodel/ with the following modifications:
  * - added flag to indicate whether children should be expanded or not
  * - added callback that allows to veto to add children - to be used in cases where not the complete hierarchy of Objects should be added to the TreeView
+ * - added a callback that allows modification after new() (e.g. adding listeners to element, ...)
  * 
  * @author thomas
  */
 public class RecursiveTreeItem<T> extends TreeItem<T> {
 
+    private Consumer<TreeItem<T>> thisConsumer;
     private Callback<T, ObservableList<? extends T>> childrenFactory;
     private Callback<T, Node> graphicsFactory;
 
@@ -70,14 +73,20 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
         this(value, graphicsFactory, childrenFactory, expandItem, (item) -> true);
     }
 
+    public RecursiveTreeItem(final T value, Callback<T, Node> graphicsFactory, Callback<T, ObservableList<? extends T>> childrenFactory, boolean expandItem, Callback<T, Boolean> confirmAdd){
+        this(value, (item) -> { }, graphicsFactory, childrenFactory, expandItem, (item) -> true);
+    }
+
     public RecursiveTreeItem(
             final T value, 
+            Consumer<TreeItem<T>> thisConsumer,
             Callback<T, Node> graphicsFactory, 
             Callback<T, ObservableList<? extends T>> childrenFactory, 
             boolean expandItem,
             Callback<T, Boolean> confirmAdd ){
         super(value, graphicsFactory.call(value));
 
+        this.thisConsumer = thisConsumer;
         this.graphicsFactory = graphicsFactory;
         this.childrenFactory = childrenFactory;
         this.expandItem = expandItem;
@@ -94,6 +103,8 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
         });
 
         this.setExpanded(expandItem);
+        
+        thisConsumer.accept(this);
     }
 
     private void addChildrenListener(T value){
@@ -102,7 +113,7 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
         children.stream().
                 // check each child if it should be added
                 filter(child -> { return confirmAdd.call(child); }).
-                forEach(child -> this.getChildren().add(new RecursiveTreeItem<>(child, graphicsFactory, childrenFactory, expandItem, confirmAdd)));
+                forEach(child -> this.getChildren().add(new RecursiveTreeItem<>(child, thisConsumer, graphicsFactory, childrenFactory, expandItem, confirmAdd)));
 
         children.addListener((ListChangeListener<T>) change -> {
             while(change.next()){
@@ -112,7 +123,7 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
                     change.getAddedSubList().stream().
                             // check each child if it should be added
                             filter(t -> { return confirmAdd.call(t); }).
-                            forEach(t-> newchildren.add(new RecursiveTreeItem<>(t, graphicsFactory, childrenFactory, expandItem, confirmAdd)));
+                            forEach(t-> newchildren.add(new RecursiveTreeItem<>(t, thisConsumer, graphicsFactory, childrenFactory, expandItem, confirmAdd)));
                     RecursiveTreeItem.this.getChildren().addAll(newchildren);
                 }
 
