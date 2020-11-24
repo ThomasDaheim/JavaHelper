@@ -25,13 +25,13 @@
  */
 package tf.helper.general;
 
-import tf.helper.javafx.AboutMenu;
 import java.io.IOException;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import tf.helper.javafx.AboutMenu;
 
 /**
  * Hold info on the running up - either through setting or through reading jar file

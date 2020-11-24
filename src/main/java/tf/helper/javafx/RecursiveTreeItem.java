@@ -117,7 +117,6 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
 
         children.addListener((ListChangeListener<T>) change -> {
             while(change.next()){
-
                 if(change.wasAdded()){
                     final ObservableList<TreeItem<T>> newchildren = FXCollections.observableArrayList();
                     change.getAddedSubList().stream().
@@ -137,7 +136,6 @@ public class RecursiveTreeItem<T> extends TreeItem<T> {
                         RecursiveTreeItem.this.getChildren().removeAll(new LinkedHashSet<>(itemsToRemove));
                     });
                 }
-
             }
         });
     }

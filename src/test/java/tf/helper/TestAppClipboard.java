@@ -25,7 +25,6 @@
  */
 package tf.helper;
 
-import tf.helper.javafx.AppClipboard;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,6 +39,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import tf.helper.javafx.AppClipboard;
 
 /**
  *
