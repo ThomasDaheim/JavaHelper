@@ -104,7 +104,7 @@ public class CellUtils {
         return ObjectsHelper.uncheckedCast(defaultTreeItemStringConverter);
     }
 
-    private static <T> String getItemText(Cell<T> cell, StringConverter<T> converter) {
+    public static <T> String getItemText(Cell<T> cell, StringConverter<T> converter) {
         return converter == null ?
             cell.getItem() == null ? "" : cell.getItem().toString() :
             converter.toString(cell.getItem());
@@ -219,9 +219,7 @@ public class CellUtils {
                               final HBox hbox,
                               final Node graphic,
                               final TextField textField) {
-        if (textField != null) {
-            textField.setText(getItemText(cell, converter));
-        }
+        textField.setText(getItemText(cell, converter));
         cell.setText(null);
 
         if (graphic != null) {
