@@ -65,6 +65,7 @@ dependencies {
 
     compile 'commons-io:commons-io:2.6'
     compile 'org.apache.commons:commons-lang3:3.9'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.15'
 
     compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
     compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.14'
