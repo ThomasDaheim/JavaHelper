@@ -25,12 +25,15 @@
  */
 package tf.helper;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import tf.helper.doundo.AbstractDoUndoAction;
 import tf.helper.doundo.DoUndoActionList;
 import tf.helper.doundo.DoUndoException;
 import tf.helper.doundo.IDoUndoAction;
@@ -202,6 +205,7 @@ public class TestDoUndoActions {
     
     @Test
     public void testNoDoActionList() {
+        // don't confuse with exception logging
         final DoUndoActionList actionList = new DoUndoActionList();
 
         actionList.addAction(action1);
@@ -237,6 +241,9 @@ public class TestDoUndoActions {
     
     @Test
     public void testNoDoUndoActionList() {
+        // don't confuse with exception logging
+        Logger.getLogger(AbstractDoUndoAction.class.getName()).setLevel(Level.OFF);
+
         final DoUndoActionList actionList = new DoUndoActionList();
 
         actionList.addAction(action1);
@@ -244,11 +251,10 @@ public class TestDoUndoActions {
         actionList.addAction(action3);
         actionList.addAction(noDoUndoAction);
 
+        Assert.assertTrue(actionList.undoInReverseOrder());
+        
         boolean hasException = false;
         boolean result = true;
-        
-        Assert.assertTrue(actionList.undoInReverseOrder());
-
         try {
             result = actionList.doAction();
         } catch (DoUndoException ex) {
@@ -258,7 +264,8 @@ public class TestDoUndoActions {
         Assert.assertFalse(result);
         Assert.assertFalse(hasException);
         
-        
+        hasException = false;
+        result = true;
         try {
             result = actionList.undoAction();
         } catch (DoUndoException ex) {
@@ -268,6 +275,8 @@ public class TestDoUndoActions {
         Assert.assertFalse(result);
         Assert.assertFalse(hasException);
         
+        hasException = false;
+        result = true;
         try {
             result = actionList.doAction();
         } catch (DoUndoException ex) {

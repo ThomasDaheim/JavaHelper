@@ -33,6 +33,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.EnumUtils;
+import tf.helper.general.IPreferencesStore;
 
 /**
  *
@@ -51,7 +53,7 @@ public class EnumHelper {
         return INSTANCE;
     }
     
-    public <T extends Enum> VBox createToggleGroup(final Class<T> enumClass, final Enum currentValue) {
+    public <T extends Enum<T>> VBox createToggleGroup(final Class<T> enumClass, final Enum currentValue) {
         final T[] values = enumClass.getEnumConstants();
         
         final List<RadioButton> buttons = new ArrayList<>();
@@ -71,7 +73,7 @@ public class EnumHelper {
         return result;
     }
     
-    public <T extends Enum> T selectedEnumToggleGroup(final Class<T> enumClass, final VBox enumVBox) {
+    public <T extends Enum<T>> T selectedEnumToggleGroup(final Class<T> enumClass, final VBox enumVBox) {
         assert enumClass.getEnumConstants().length == enumVBox.getChildren().size();
                 
         final T[] values = enumClass.getEnumConstants();
@@ -92,7 +94,7 @@ public class EnumHelper {
         return result;
     }
     
-    public <T extends Enum> ChoiceBox<T> createChoiceBox(final Class<T> enumClass, final Enum currentValue) {
+    public <T extends Enum<T>> ChoiceBox<T> createChoiceBox(final Class<T> enumClass, final Enum currentValue) {
         final T[] values = enumClass.getEnumConstants();
 
         ChoiceBox<T> result = new ChoiceBox<>();
@@ -103,7 +105,7 @@ public class EnumHelper {
         return result;
     }
     
-    public <T extends Enum> T selectedEnumChoiceBox(final Class<T> enumClass, final ChoiceBox<T> enumChoiceBox) {
+    public <T extends Enum<T>> T selectedEnumChoiceBox(final Class<T> enumClass, final ChoiceBox<T> enumChoiceBox) {
         assert enumClass.getEnumConstants().length == enumChoiceBox.getItems().size();
                 
         final T[] values = enumClass.getEnumConstants();
@@ -114,5 +116,19 @@ public class EnumHelper {
     
     public void selectEnum(final ChoiceBox<? extends Enum> enumChoiceBox, final Enum enumValue) {
         enumChoiceBox.getSelectionModel().select(enumValue.ordinal());
+    }
+    
+    public <T extends Enum<T>> T enumFromStringWithDefault(final Class<T> enumClass, final String value, final String defaultValue) {
+        T result = EnumUtils.getEnum(enumClass, value);
+        
+        if (result == null) {
+            result = EnumUtils.getEnum(enumClass, defaultValue);
+        }
+        
+        return result;
+    }
+    
+    public <T extends Enum<T>> T enumFromPreferenceWithDefault(final IPreferencesStore prefStore, final String pref, final Class<T> enumClass, final String defaultValue) {
+        return enumFromStringWithDefault(enumClass, prefStore.get(pref, defaultValue), defaultValue);
     }
 }

@@ -25,6 +25,8 @@
  */
 package tf.helper;
 
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -285,6 +287,13 @@ public class TestDoUndoStacks {
     
     @Test
     public void testGoodStackManager() {
+        // don't confuse with thread dumps
+        System.setErr(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                    //DO NOTHING
+                }
+            }));
+
         // test improper keys in various combinations
         Assert.assertFalse(DoUndoManager.getInstance().canDo());
         Assert.assertFalse(DoUndoManager.getInstance().canDo(null));
@@ -334,6 +343,13 @@ public class TestDoUndoStacks {
     
     @Test
     public void testBadStackManager() {
+        // don't confuse with thread dumps
+        System.setErr(new PrintStream(new OutputStream() {
+                public void write(int b) {
+                    //DO NOTHING
+                }
+            }));
+
         // add one stack and test it
         testBadStack(DoUndoManager.getInstance(), "Stack1");
         

@@ -40,7 +40,7 @@ if (!hasProperty('mainClass')) {
 mainClassName = 'tf.helper.test.TestWebView'
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.8'
+version='1.9'
 
 repositories {
     mavenLocal()
@@ -53,8 +53,8 @@ repositories {
 
 dependencies {
 //    def javafx_version='11.0.2'
-//    def javafx_version='14'
-    def javafx_version='15.0.1'
+    def javafx_version='14'
+//    def javafx_version='15.0.1'
     compile "org.openjfx:javafx-base:$javafx_version:$platform"
     compile "org.openjfx:javafx-graphics:$javafx_version:$platform"
     compile "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -65,8 +65,10 @@ dependencies {
 
     compile 'commons-io:commons-io:2.6'
     compile 'org.apache.commons:commons-lang3:3.9'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.15'
 
     compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
+    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.14'
    
     testCompile "org.testfx:testfx-junit:4.0.+"
     testCompile "org.testfx:testfx-core:4.0.+"
@@ -107,6 +109,7 @@ def newArgs = [ '--add-modules', 'javafx.controls,javafx.graphics,javafx.base,ja
                 '--add-exports', 'javafx.graphics/com.sun.javafx.scene.traversal=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED',
                 '--add-exports', 'javafx.graphics/com.sun.javafx.scene.input=ALL-UNNAMED',
+                '--add-exports', 'javafx.base/com.sun.javafx.collections=ALL-UNNAMED',
                 '--add-opens', 'javafx.graphics/javafx.scene.layout=ALL-UNNAMED',
     ]
     

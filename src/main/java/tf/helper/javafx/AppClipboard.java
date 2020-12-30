@@ -25,6 +25,7 @@
  */
 package tf.helper.javafx;
 
+// needs '--add-exports', 'javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED',
 import com.sun.javafx.tk.TKClipboard;
 import java.io.File;
 import java.security.AccessControlContext;

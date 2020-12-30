@@ -56,6 +56,7 @@ public class TableMenuUtils {
     // option to flag columns that can't be hidden
     // set as userdata
     public static final String NO_HIDE_COLUMN = "noHideColumn";
+    public static final String NO_LIST_COLUMN = "noListColumn";
     
     /**
      * Make table menu button visible and replace the context menu with a custom context menu via reflection.
@@ -64,6 +65,10 @@ public class TableMenuUtils {
      * @param tableView
      */
     public static void addCustomTableViewMenu(final TableView tableView) {
+        if (tableView.getSkin() == null) {
+            return;
+        }
+        
         // enable table menu
         tableView.setTableMenuButtonVisible(true);
 
@@ -72,6 +77,10 @@ public class TableMenuUtils {
     }
 
     public static void addCustomTreeTableViewMenu(final TreeTableView tableView) {
+        if (tableView.getSkin() == null) {
+            return;
+        }
+        
         // enable table menu
         tableView.setTableMenuButtonVisible(true);
 
@@ -156,18 +165,21 @@ public class TableMenuUtils {
 
         // menu item for each of the available columns
         for (TableColumnBase<?, ?> column : columns) {
-            final CheckBox cb = new CheckBox(column.getText());
-            cb.selectedProperty().bindBidirectional(column.visibleProperty());
+            // TFE, 20201205: allow to exclude columns from the list
+            if (!NO_LIST_COLUMN.equals((String) column.getUserData())) {
+                final CheckBox cb = new CheckBox(column.getText());
+                cb.selectedProperty().bindBidirectional(column.visibleProperty());
 
-            cmi = new CustomMenuItem(cb);
-            cmi.setHideOnClick(false);
+                cmi = new CustomMenuItem(cb);
+                cmi.setHideOnClick(false);
 
-            cm.getItems().add(cmi);
-            
-            // some columns just want to stay visible
-            if (NO_HIDE_COLUMN.equals((String) column.getUserData())) {
-                column.setVisible(true);
-                cmi.setDisable(true);
+                cm.getItems().add(cmi);
+
+                // some columns just want to stay visible
+                if (NO_HIDE_COLUMN.equals((String) column.getUserData())) {
+                    column.setVisible(true);
+                    cmi.setDisable(true);
+                }
             }
         }
 
