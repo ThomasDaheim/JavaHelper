@@ -25,7 +25,6 @@
  */
 package tf.helper.javafx;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.geometry.Side;
 import javafx.scene.Node;
