@@ -40,7 +40,7 @@ if (!hasProperty('mainClass')) {
 mainClassName = 'tf.helper.test.TestWebView'
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.9'
+version='1.10'
 
 repositories {
     mavenLocal()

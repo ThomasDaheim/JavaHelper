@@ -87,9 +87,6 @@ public class DragResizer {
     private double startX;
     private double startY;
     
-    private boolean initMinWidth;
-    private boolean initMinHeight;
-    
     private boolean dragging;
     
     private DragResizer(final Region aRegion, final ResizeArea anArea) {
@@ -164,7 +161,7 @@ public class DragResizer {
         
         if ((inLeft && area.listenLeft()) || (inRight && area.listenRight())) {
             double mousex = event.getX();
-            double newWidth = region.getMinWidth();
+            double newWidth = region.getPrefWidth();
             if (inLeft) {
                 newWidth -= (mousex - startX);
             } else {
@@ -173,14 +170,12 @@ public class DragResizer {
                 startX = mousex;
             }
 //            System.out.println("mousex: " + mousex + ", " + "x: " + startX + ", " + "newWidth: " + newWidth);
-            region.setMinWidth(newWidth);
-            region.setMaxWidth(newWidth);
             region.setPrefWidth(newWidth);
         }
 
         if ((inBottom && area.listenBottom()) || (inTop && area.listenTop())) {
             double mousey = event.getY();
-            double newHeight = region.getMinHeight();
+            double newHeight = region.getPrefHeight();
             if (inBottom) {
                 newHeight += (mousey - startY);
                 // bottom: startY is max value - we need to recalc difference to previous
@@ -189,8 +184,6 @@ public class DragResizer {
                 newHeight -= (mousey - startY);
             }
 //            System.out.println("mousey: " + mousey + ", " + "y: " + startY + ", " + "newHeight: " + newHeight);
-            region.setMinHeight(newHeight);
-            region.setMaxHeight(newHeight);
             region.setPrefHeight(newHeight);
         }
     }
@@ -202,19 +195,7 @@ public class DragResizer {
         }
         
         dragging = true;
-        
-        // make sure that the minimum width / height is set to the current height once,
-        // setting a min height that is smaller than the current height will have no
-        if (!initMinWidth) {
-            region.setMinWidth(region.getWidth());
-            initMinWidth = true;
-        }
         startX = event.getX();
-        
-        if (!initMinHeight) {
-            region.setMinHeight(region.getHeight());
-            initMinHeight = true;
-        }
         startY = event.getY();
     }
 }
