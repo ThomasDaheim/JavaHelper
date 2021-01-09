@@ -74,12 +74,12 @@ public class TableViewPreferences {
     
     public static void saveTableViewPreferences(final TableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
         saveColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
-        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
+        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
     }
     
     public static void saveTreeTableViewPreferences(final TreeTableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
         saveColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
-        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
+        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
     }
     
     private static void saveColumnPreferences(final ObservableList<TableColumnBase> columns, final String prefPrefix, final IPreferencesStore prefStore) {
@@ -122,11 +122,23 @@ public class TableViewPreferences {
         }
     }
     
-    private static void saveSortPreferences(final ObservableList<TableColumnBase> columns, final String prefPrefix, final IPreferencesStore prefStore) {
-        // sort order as list of ids
+    private static void saveSortPreferences(
+            final ObservableList<TableColumnBase> columns, 
+            final ObservableList<TableColumnBase> sortColumns, 
+            final String prefPrefix, 
+            final IPreferencesStore prefStore) {
+        // TFE, 20210801: delete previous sort columns
         int colNum = 0;
-        if (checkUniqueIds(columns)) {
-            for (TableColumnBase column : columns) {
+        for (TableColumnBase column : columns) {
+            final String prefKey = prefPrefix + SEPARATOR + SORT_ORDER + SEPARATOR + String.valueOf(colNum);
+            prefStore.remove(prefKey);
+            colNum++;
+        }
+        
+        // sort order as list of ids
+        colNum = 0;
+        if (checkUniqueIds(sortColumns)) {
+            for (TableColumnBase column : sortColumns) {
                 // TFE, 20210108: store SortType as well (ASc / DESC) - as sign of id
                 // aaaaargh, no common base class for TableColumn.SortType...
                 String id = column.getId();
