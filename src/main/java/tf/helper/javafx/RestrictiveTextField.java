@@ -50,53 +50,93 @@ import javafx.scene.control.TextField;
  * }
  * </pre>
  *
- * @author Christian Schudt
+ * Based on the original code from Christian Schudt
  * http://myjavafx.blogspot.com/2013/05/restricting-user-input-on-textfield.html
+ * 
+ * @Author thomas
  */
 public class RestrictiveTextField extends TextField {
- 
     // TFE, 20180602: add minLength as well
-    private IntegerProperty minLength = new SimpleIntegerProperty(this, "minLength", -1);
-    private IntegerProperty maxLength = new SimpleIntegerProperty(this, "maxLength", -1);
-    private StringProperty restrict = new SimpleStringProperty(this, "restrict");
+    private final IntegerProperty minLength = new SimpleIntegerProperty(this, "minLength", -1);
+    private final IntegerProperty maxLength = new SimpleIntegerProperty(this, "maxLength", -1);
+    private final StringProperty restrict = new SimpleStringProperty(this, "restrict");
     // TFE, 20180602: store pattern as well to speeed things up
     private Pattern restrictPattern;
+    
+    // TFE; 20210211: highlight text or prohibit inout?
+    public enum ErrorTextMode {
+        HIGHLIGHT,
+        PROHIBIT;
+    }
+    private ErrorTextMode errorTextMode = ErrorTextMode.PROHIBIT;
+    
+    private final String originalStyle;
+    private final String errorStyle = "-fx-text-fill: red;";
  
     public RestrictiveTextField() {
- 
+        originalStyle = getStyle();
+        
         textProperty().addListener(new ChangeListener<String>() {
- 
-            private boolean ignore;
+            private boolean ignore = false;
  
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String s1) {
                 if (ignore || s1 == null)
                     return;
                 
+                boolean errorText = false;
+                
                 // check for the minimal length as well
-                if (minLength.get() > -1 && s1.length() < minLength.get()) {
-                    ignore = true;
-                    setText(s);
-                    ignore = false;
+                if (s1.length() < minLength.get()) {
+                    errorText = true;
+                    if (ErrorTextMode.PROHIBIT.equals(errorTextMode)) {
+                        ignore = true;
+                        setText(s);
+                        ignore = false;
+                    }
                 }
  
                 if (maxLength.get() > -1 && s1.length() > maxLength.get()) {
-                    ignore = true;
-                    setText(s1.substring(0, maxLength.get()));
-                    ignore = false;
+                    errorText = true;
+                    if (ErrorTextMode.PROHIBIT.equals(errorTextMode)) {
+                        ignore = true;
+                        setText(s1.substring(0, maxLength.get()));
+                        ignore = false;
+                    }
                 }
  
                 //if (restrict.get() != null && !restrict.get().equals("") && !s1.matches(restrict.get() + "*")) {
                 // TFE, 20180602: use pattern
                 // TFE, 20200120: lookingAt() to support partial match e.g. during typing of values
-                if (restrict.get() != null && !restrict.get().isEmpty() && 
-                        !(restrictPattern.matcher(s1).matches() || restrictPattern.matcher(s1).lookingAt())) {
-                    ignore = true;
-                    setText(s);
-                    ignore = false;
+                // TFE, 20210212: lookingAt() unfortunately not solving our problem... use minLength instead tu support typing of input
+                if (!restrict.get().isEmpty() && (s1.length() >= minLength.get()) && !restrictPattern.matcher(s1).matches()) {
+                    errorText = true;
+                    if (ErrorTextMode.PROHIBIT.equals(errorTextMode)) {
+                        ignore = true;
+                        setText(s);
+                        ignore = false;
+                    }
+                }
+                
+                if (ErrorTextMode.HIGHLIGHT.equals(errorTextMode)) {
+                    if (errorText) {
+                        setStyle(StyleHelper.addStyle(originalStyle, errorStyle));
+                    } else {
+                        setStyle(originalStyle);
+                    }
                 }
             }
         });
+    }
+    
+    public ErrorTextMode getErrorTextMode() {
+        return errorTextMode;
+    }
+
+    public RestrictiveTextField setErrorTextMode(final ErrorTextMode mode) {
+        errorTextMode = mode;
+        
+        return this;
     }
  
     /**
@@ -121,12 +161,14 @@ public class RestrictiveTextField extends TextField {
      * Sets the min length of the text field.
      *
      * @param minLength The min length.
+     * @return this
      */
-    public void setMinLength(int minLength) {
+    public RestrictiveTextField setMinLength(int minLength) {
         this.minLength.set(minLength);
-
         // re-compile pattern since "empty allowed" might have changed
         compilePattern(this.restrict.get());
+        
+        return this;
     }
  
     /**
@@ -151,9 +193,11 @@ public class RestrictiveTextField extends TextField {
      * Sets the max length of the text field.
      *
      * @param maxLength The max length.
+     * @return this
      */
-    public void setMaxLength(int maxLength) {
+    public RestrictiveTextField setMaxLength(int maxLength) {
         this.maxLength.set(maxLength);
+        return this;
     }
  
     /**
@@ -177,27 +221,29 @@ public class RestrictiveTextField extends TextField {
     }
  
     /**
-     * Sets a regular expression character class which restricts the user input.
+     * Sets a regular expression character class which restricts the user input.E.g.
  
-     * E.g. [0-9] only allows numeric values.
+     * [0-9] only allows numeric values.
      *
-     * @param restrict The regular expression.
+     * @param rest The regular expression.
+     * @return this
      */
-    public void setRestrict(String restrict) {
-        this.restrict.set(restrict);
-        
-        compilePattern(restrict);
+    public RestrictiveTextField setRestrict(String rest) {
+        restrict.set(rest);
+        compilePattern(rest);
+
+        return this;
     }
     
-    private void compilePattern(String restrict) {
+    private void compilePattern(String rest) {
         // TFE, 20180602: store pattern as well to speeed things up
-        if (restrict == null) return;
+        if (rest == null) return;
         
         if (minLength.get() > -1) {
-            this.restrictPattern = Pattern.compile(restrict);
+            restrictPattern = Pattern.compile(rest);
         } else {
             // if no minLength than an empty string is also allowed as a pattern
-            this.restrictPattern = Pattern.compile(restrict + "*");
+            restrictPattern = Pattern.compile("(" + rest + ")|(^$)");
         }
     }
 }

@@ -129,6 +129,10 @@ public abstract class AbstractStage extends Stage {
     public void showAndWait() {
         buttonPressed = null;
         
-        super.showAndWait();
+        if (!super.isShowing()) {
+            super.showAndWait();
+        } else {
+            super.toFront();
+        }
     }
 }
