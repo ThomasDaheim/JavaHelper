@@ -31,6 +31,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -39,6 +40,10 @@ import javafx.stage.Stage;
  * @author thomas
  */
 public abstract class AbstractStage extends Stage {
+    private final String ROOT_PANE_CSS = "abstract-stage";
+    private final String GRID_PANE_CSS = "abstract-stage-grid-pane";
+    private final String SCROLL_PANE_CSS = "abstract-stage-scroll-pane";
+    
     private final GridPane myGridPane = new GridPane();
     private final VBox myRootPane = new VBox();
 
@@ -78,18 +83,23 @@ public abstract class AbstractStage extends Stage {
     }
     
     private void initStage() {
-        final ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(myGridPane);
+        final ScrollPane scrollPane = new ScrollPane(myGridPane);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
         scrollPane.setPadding(INSET_NONE);
         
         myRootPane.getChildren().add(scrollPane);
         myRootPane.setPadding(INSET_NONE);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
         
         setScene(new Scene(myRootPane));
         setResizable(false);
+
+        myRootPane.getStyleClass().add(ROOT_PANE_CSS);
+        myGridPane.getStyleClass().add(GRID_PANE_CSS);
+        scrollPane.getStyleClass().add(SCROLL_PANE_CSS);
     }
     
     public void setActionAccelerator(final Button button) {
@@ -119,6 +129,10 @@ public abstract class AbstractStage extends Stage {
     public void showAndWait() {
         buttonPressed = null;
         
-        super.showAndWait();
+        if (!super.isShowing()) {
+            super.showAndWait();
+        } else {
+            super.toFront();
+        }
     }
 }

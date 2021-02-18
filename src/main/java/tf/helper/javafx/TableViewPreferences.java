@@ -31,8 +31,10 @@ import java.util.List;
 import java.util.Map;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumnBase;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -72,12 +74,12 @@ public class TableViewPreferences {
     
     public static void saveTableViewPreferences(final TableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
         saveColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
-        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
+        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
     }
     
     public static void saveTreeTableViewPreferences(final TreeTableView tableView, final String prefPrefix, final IPreferencesStore prefStore) {
         saveColumnPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), prefPrefix, prefStore);
-        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
+        saveSortPreferences(ObjectsHelper.uncheckedCast(tableView.getColumns()), ObjectsHelper.uncheckedCast(tableView.getSortOrder()), prefPrefix, prefStore);
     }
     
     private static void saveColumnPreferences(final ObservableList<TableColumnBase> columns, final String prefPrefix, final IPreferencesStore prefStore) {
@@ -120,12 +122,36 @@ public class TableViewPreferences {
         }
     }
     
-    private static void saveSortPreferences(final ObservableList<TableColumnBase> columns, final String prefPrefix, final IPreferencesStore prefStore) {
-        // sort order as list of ids
+    private static void saveSortPreferences(
+            final ObservableList<TableColumnBase> columns, 
+            final ObservableList<TableColumnBase> sortColumns, 
+            final String prefPrefix, 
+            final IPreferencesStore prefStore) {
+        // TFE, 20210801: delete previous sort columns
         int colNum = 0;
-        if (checkUniqueIds(columns)) {
-            for (TableColumnBase column : columns) {
-                final String id = column.getId();
+        for (TableColumnBase column : columns) {
+            final String prefKey = prefPrefix + SEPARATOR + SORT_ORDER + SEPARATOR + String.valueOf(colNum);
+            prefStore.remove(prefKey);
+            colNum++;
+        }
+        
+        // sort order as list of ids
+        colNum = 0;
+        if (checkUniqueIds(sortColumns)) {
+            for (TableColumnBase column : sortColumns) {
+                // TFE, 20210108: store SortType as well (ASc / DESC) - as sign of id
+                // aaaaargh, no common base class for TableColumn.SortType...
+                String id = column.getId();
+                if (column instanceof TableColumn) {
+                    if (TableColumn.SortType.DESCENDING.equals(((TableColumn) column).getSortType())) {
+                        id = "-" + id;
+                    }
+                } else {
+                    if (TreeTableColumn.SortType.DESCENDING.equals(((TreeTableColumn) column).getSortType())) {
+                        id = "-" + id;
+                    }
+                }
+
                 final String prefKey = prefPrefix + SEPARATOR + SORT_ORDER + SEPARATOR + String.valueOf(colNum);
                 
 //                System.out.println("save: prefKey: " + prefKey + ", id: " + id);
@@ -248,12 +274,27 @@ public class TableViewPreferences {
             for (int colNum = 0; colNum < columns.size(); colNum++) {
                 final String prefKey = prefPrefix + SEPARATOR + SORT_ORDER + SEPARATOR + String.valueOf(colNum);
                 
-                final String id = prefStore.get(prefKey, "");
+                String id = prefStore.get(prefKey, "");
 //                System.out.println("load: prefKey: " + prefKey + ", id: " + id);
                 
                 // if its there, add it!
+                // TFE, 20210108: store SortType as well (ASc / DESC) - as sign of id
+                // aaaaargh, no common base class for TableColumn.SortType...
+                boolean ascSort = true;
+                if (id.startsWith("-")) {
+                    ascSort = false;
+                    id = id.substring(1);
+                }
                 if (columnMap.containsKey(id)) {
-                    result.add(columnMap.remove(id));
+                    final TableColumnBase column = columnMap.remove(id);
+                    
+                    if (columns.get(0) instanceof TableColumn) {
+                        ((TableColumn) column).setSortType(ascSort ? TableColumn.SortType.ASCENDING : TableColumn.SortType.DESCENDING);
+                    } else {
+                        ((TreeTableColumn) column).setSortType(ascSort ? TreeTableColumn.SortType.ASCENDING : TreeTableColumn.SortType.DESCENDING);
+                    }
+                    
+                    result.add(column);
                 }
             }
         }

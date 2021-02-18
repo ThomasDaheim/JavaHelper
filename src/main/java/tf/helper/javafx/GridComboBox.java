@@ -72,7 +72,7 @@ import javafx.util.StringConverter;
  */
 public class GridComboBox<T extends Region> extends ComboBox<String> {
 
-    private final boolean styleSheetAdded = getStylesheets().add(GridComboBox.class .getResource("/GridComboBox.css").toExternalForm());
+    private final boolean styleSheetAdded = getStylesheets().add(GridComboBox.class.getResource("/GridComboBox.css").toExternalForm());
     
     private static <T> StringConverter<T> defaultStringConverter() {
         return new StringConverter<T>() {
