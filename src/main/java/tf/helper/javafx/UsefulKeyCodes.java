@@ -35,23 +35,23 @@ import javafx.scene.input.KeyEvent;
  * @author thomas
  */
 public enum UsefulKeyCodes {
-    CNTRL_A(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_ANY)),
-    CNTRL_C(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_ANY)),
-    CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY)),
-    SHIFT_CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_ANY, KeyCombination.SHIFT_DOWN)),
-    CNTRL_X(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_ANY)),
+    CNTRL_A(new KeyCodeCombination(KeyCode.A, KeyCombination.CONTROL_DOWN)),
+    CNTRL_C(new KeyCodeCombination(KeyCode.C, KeyCombination.CONTROL_DOWN)),
+    CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN)),
+    SHIFT_CNTRL_V(new KeyCodeCombination(KeyCode.V, KeyCombination.CONTROL_DOWN, KeyCombination.SHIFT_DOWN)),
+    CNTRL_X(new KeyCodeCombination(KeyCode.X, KeyCombination.CONTROL_DOWN)),
     SHIFT_DEL(new KeyCodeCombination(KeyCode.DELETE, KeyCombination.SHIFT_DOWN)),
     DEL(new KeyCodeCombination(KeyCode.DELETE)),
     SHIFT_INSERT(new KeyCodeCombination(KeyCode.INSERT, KeyCombination.SHIFT_DOWN)),
     INSERT(new KeyCodeCombination(KeyCode.INSERT)),
     // TFE, 20200214: add some for save, cancel, esc, ...
-    CNTRL_S(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY)),
+    CNTRL_S(new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN)),
     ESCAPE(new KeyCodeCombination(KeyCode.ESCAPE)),
     F3(new KeyCodeCombination(KeyCode.F3)),
     SHIFT_F3(new KeyCodeCombination(KeyCode.F3, KeyCombination.SHIFT_DOWN)),
     // TFE, 20200423: do / undo
-    CNTRL_Z(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_ANY)),
-    CNTRL_Y(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_ANY)),
+    CNTRL_Z(new KeyCodeCombination(KeyCode.Z, KeyCombination.CONTROL_DOWN)),
+    CNTRL_Y(new KeyCodeCombination(KeyCode.Y, KeyCombination.CONTROL_DOWN)),
     ;
 
     private final KeyCodeCombination keyCode;
