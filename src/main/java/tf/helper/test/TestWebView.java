@@ -41,19 +41,23 @@ public class TestWebView extends Application {
         launch(args);
     }
 
+    @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("JavaFX WebView Example");
 
-        final WebView webView = new WebView();
-
+        final WebView HTML5Test = new WebView();
         // https://stackoverflow.com/a/37420816
-        webView.getEngine().load("https://html5test.com");
+        HTML5Test.getEngine().load("https://html5test.com");
+        
+        final WebView geoLocation = new WebView();
+        // https://www.w3schools.com/html/html5_geolocation.asp
+        final String editor_script = TestWebView.class.getResource("/geolocation.html").toExternalForm();
+        geoLocation.getEngine().load(editor_script);
 
-        final VBox vBox = new VBox(webView);
+        final VBox vBox = new VBox(HTML5Test, geoLocation);
         final Scene scene = new Scene(vBox, 960, 600);
 
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 }
