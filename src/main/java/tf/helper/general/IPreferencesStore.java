@@ -41,7 +41,7 @@ public interface IPreferencesStore {
     
     public abstract void remove(String key);
     
-    public abstract void exportSubtree(OutputStream os);
+    public abstract void exportPreferences(OutputStream os);
     
     public abstract void importPreferences(InputStream is);
 }
