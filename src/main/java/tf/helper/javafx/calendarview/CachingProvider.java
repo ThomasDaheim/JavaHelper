@@ -26,6 +26,7 @@
 package tf.helper.javafx.calendarview;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -37,10 +38,22 @@ import javafx.collections.ObservableList;
  * @author thomas
  */
 public abstract class CachingProvider implements ICalendarProvider {
-    final Map<LocalDate, List<ICalenderEvent>> eventCache = new HashMap<>();
+    private final Map<LocalDate, List<ICalenderEvent>> eventCache = new HashMap<>();
+    private final List<LocalDate> cachedDates = new ArrayList<>();
     
-    public abstract boolean isValidLocale(final Locale locale);
-    public abstract ObservableList<ICalenderEvent> getCalendarEventsForCache(final Locale locale, final LocalDate startDate, final LocalDate endDate);
+    protected abstract boolean isValidLocale(final Locale locale);
+    protected abstract Map<LocalDate, List<ICalenderEvent>> getCalendarEventsForCache(final Locale locale, final LocalDate startDate, final LocalDate endDate);
+    
+    protected List<LocalDate> getCachedDates() {
+        return cachedDates;
+    }
+
+    // default inmplementation for single date cache entries
+    // can be overwritten for other strategies, e.g. returning results for the full year on a 
+    // single getCalendarEventsForCache() call as a calendar would do
+    protected boolean isCachedDate(final LocalDate date) {
+        return cachedDates.contains(date);
+    }
     
     @Override
     public Map<LocalDate, List<ICalenderEvent>> getCalendarEvents(final Locale locale, final LocalDate startDate, final LocalDate endDate) {
@@ -52,11 +65,15 @@ public abstract class CachingProvider implements ICalendarProvider {
         
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             // not yet in cache? lets add it!
-            if (!eventCache.containsKey(date)) {
-                eventCache.put(date, getCalendarEventsForCache(locale, startDate, endDate));
+            if (!isCachedDate(date) && !eventCache.containsKey(date)) {
+                final Map<LocalDate, List<ICalenderEvent>> events = getCalendarEventsForCache(locale, date, date);
+                eventCache.putAll(events);
+                cachedDates.addAll(events.keySet());
             }
             
-            result.put(date, eventCache.get(date));
+            if (eventCache.containsKey(date)) {
+                result.put(date, eventCache.get(date));
+            }
         }
         
         return result;

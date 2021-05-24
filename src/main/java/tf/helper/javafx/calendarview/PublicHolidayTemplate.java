@@ -27,6 +27,7 @@ package tf.helper.javafx.calendarview;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.temporal.TemporalAdjusters;
 
 /**
@@ -78,8 +79,59 @@ public class PublicHolidayTemplate {
         return easterOffset;
     }
     
+    // https://www.geeksforgeeks.org/how-to-calculate-the-easter-date-for-a-given-year-using-gauss-algorithm/
     public static LocalDate calculateEasterSunday(final int year) {
-        final LocalDate result = LocalDate.now();
+        LocalDate result;
+
+        float A, B, C, P, Q, M, N, D, E;
+
+        // All calculations done
+        // on the basis of
+        // Gauss Easter Algorithm
+        
+        // calculate the location of the year Y in the Metonic cycle
+        A = year % 19;
+        // find the number of leap days according to Julian’s calendar
+        B = year % 4;
+        // let’s take into account that the non-leap year is one day longer than 52 weeks
+        C = year % 7;
+        
+        // M depends on the century of year Y. For 19th century, M = 23. For the 21st century, M = 24 and so on
+        P = (float)Math.floor(year / 100);
+        Q = (float)Math.floor((13 + 8 * P) / 25);
+        M = (15 - Q + P - P / 4) % 30;
+        
+        // The difference between the number of leap days between the Julian and the Gregorian calendar
+        N = (4 + P - P / 4) % 7;
+        
+        // The number of days to be added to March 21 to find the date of the Paschal Full Moon
+        D = (19 * A + M) % 30;
+        
+        // the number of days from the Paschal full moon to the next Sunday
+        E = (2 * B + 4 * C + 6 * D + N) % 7;
+        
+        // using D and E, the date of Easter Sunday is going to be March (22 + D + E)
+        int days = (int)(22 + D + E);
+
+        // corner cases: the lunar month is not exactly 30 days but a little less than 30 days
+        
+        // corner case, when D is 29
+        if ((D == 29) && (E == 6)) {
+            result = LocalDate.of(year, Month.APRIL, 19);
+        }
+        // corner case, when D is 28
+        else if ((D == 28) && (E == 6)) {
+            result = LocalDate.of(year, Month.APRIL, 18);
+        } else {
+            // If days > 31, move to April
+            if (days > 31) {
+                result = LocalDate.of(year, Month.APRIL, days - 31);
+            }
+            // Otherwise, stay on March
+            else {
+                result = LocalDate.of(year, Month.MARCH, days);
+            }
+        }
         
         return result;
     }

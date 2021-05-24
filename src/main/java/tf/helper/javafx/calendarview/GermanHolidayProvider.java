@@ -25,17 +25,14 @@
  */
 package tf.helper.javafx.calendarview;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 /**
  * Provider for public holidays in Germany (independent of region).
@@ -72,36 +69,47 @@ public class GermanHolidayProvider extends CachingProvider {
         holidays.add(new PublicHolidayTemplate("2. Weihnachtstag", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.DECEMBER, 26), 0));
     }
     
-    public GermanHolidayProvider getInstance() {
+    public static GermanHolidayProvider getInstance() {
         return INSTANCE;
     }
     
+    protected List<PublicHolidayTemplate> getHolidays() {
+        return holidays;
+    }
+    
     @Override
-    public boolean isValidLocale(final Locale locale) {
+    protected boolean isValidLocale(final Locale locale) {
         return Locale.GERMANY.getISO3Country().equals(locale.getISO3Country());
     }
 
     @Override
-    public ObservableList<ICalenderEvent> getCalendarEventsForCache(Locale locale, LocalDate startDate, LocalDate endDate) {
+    protected boolean isCachedDate(final LocalDate date) {
+        // if we have 1st of January we have the whole year...
+        return getCachedDates().contains(LocalDate.of(date.getYear(), Month.JANUARY, 1));
+    }
+
+    @Override
+    protected Map<LocalDate, List<ICalenderEvent>> getCalendarEventsForCache(Locale locale, LocalDate startDate, LocalDate endDate) {
         // calculation of german holidays - always calculate full year...
-        final ObservableList<ICalenderEvent> result = FXCollections.observableArrayList();
+        final Map<LocalDate, List<ICalenderEvent>> result = new HashMap<>();
         
         // could be a span longer than one year...
         for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
-            result.addAll(getHolidaysForYear(year));
+            result.putAll(getHolidaysForYear(year));
         }
         
         return result;
     }
     
-    private ObservableList<ICalenderEvent> getHolidaysForYear(final int year) {
-        final ObservableList<ICalenderEvent> result = FXCollections.observableArrayList();
+    private Map<LocalDate, List<ICalenderEvent>> getHolidaysForYear(final int year) {
+        final Map<LocalDate, List<ICalenderEvent>> result = new HashMap<>();
         
         // calculate easter sunday for year
         final LocalDate easterSunday = PublicHolidayTemplate.calculateEasterSunday(year);
         
-        for (PublicHolidayTemplate holiday: holidays) {
-            result.add(PublicHolidayTemplate.concretePublicHoliday(holiday, year, easterSunday));
+        for (PublicHolidayTemplate template: holidays) {
+            final PublicHoliday holiday = PublicHolidayTemplate.concretePublicHoliday(template, year, easterSunday);
+            result.put(holiday.getStartDate().get(), Arrays.asList(holiday));
         }
 
         return result;

@@ -43,7 +43,7 @@ public class HolidayProviderFactory implements ICalendarProvider {
     private HolidayProviderFactory() {
     }
     
-    public HolidayProviderFactory getInstance() {
+    public static HolidayProviderFactory getInstance() {
         return INSTANCE;
     }
     
