@@ -34,6 +34,8 @@ import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import static java.util.Objects.requireNonNull;
 
@@ -57,11 +59,13 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import tf.helper.general.ObjectsHelper;
+import tf.helper.javafx.TooltipHelper;
 
 /**
  * Implementation of a limited calendar view that can only show months an an excel-like grid.
@@ -92,6 +96,8 @@ public class CalendarView implements EventTarget {
     private final BooleanProperty showWeekNumber = new SimpleBooleanProperty(true);
     
     private final IntegerProperty additionalMonths = new SimpleIntegerProperty(0);
+    
+    private final List<ICalendarProvider> providers = new ArrayList<>();
     
     public enum DateStyle {
         DATE_SATURDAY(PseudoClass.getPseudoClass("date-saturday")),
@@ -254,6 +260,9 @@ public class CalendarView implements EventTarget {
             final Label label = getDateLabel(date, first, last, doMarkToday);
             GridPane.setHalignment(label, HPos.CENTER);
             calendar.add(label, dayOfWeek - 1 + colOffset, weeksSinceFirstDisplayed + rowOffset);
+            
+            // check providers if any styles to apply
+            applyProviderStyles(date, label);
 
             // in case of weeknum change add it in the first column
             if (showWeekNumber.get()) {
@@ -411,6 +420,34 @@ public class CalendarView implements EventTarget {
         }
     }
     
+    private void applyProviderStyles(final LocalDate date, final Label label) {
+        String toolText = "";
+        for (ICalendarProvider provider : providers) {
+            final List<ICalenderEvent> events = provider.getCalendarEvents(localeProperty.get(), date, date).get(date);
+            if (events == null || events.isEmpty()) {
+                continue;
+            }
+            for (ICalenderEvent event : events) {
+                label.pseudoClassStateChanged(event.getStyle().get().getPseudoClass(), true);
+                if (!toolText.isEmpty()) {
+                    toolText += ", ";
+                }
+                toolText += event.getDescription().get();
+            }
+        }
+        if (!toolText.isEmpty()) {
+            Tooltip tooltip = label.getTooltip();
+            if (tooltip == null) {
+                tooltip = new Tooltip(toolText);
+                tooltip.getStyleClass().add("calendar-tooltip");
+                TooltipHelper.updateTooltipBehavior(tooltip, 0, 10000, 0, true);
+            } else {
+                tooltip.setText(tooltip.getText() + "; " + toolText);
+            }
+            label.setTooltip(tooltip);
+        }
+    }
+    
     public final ScrollPane getCalendarView() {
         return view;
     }
@@ -473,6 +510,16 @@ public class CalendarView implements EventTarget {
     
     public final void setAdditionalMonths(final int months) {
         additionalMonths.set(months);
+    }
+    
+    public void addCalendarProvider(final ICalendarProvider provider) {
+        providers.add(provider);
+        rebuildCalendar(CalendarViewEvent.PROVIDER_CHANGED);
+    }
+    
+    public void removeCalendarProvider(final ICalendarProvider provider) {
+        providers.remove(provider);
+        rebuildCalendar(CalendarViewEvent.PROVIDER_CHANGED);
     }
     
     // support for calendar events

@@ -91,9 +91,9 @@ public class PublicHolidayTemplate {
         
         // calculate the location of the year Y in the Metonic cycle
         A = year % 19;
-        // find the number of leap days according to Julian’s calendar
+        // find the number of leap days according to Julian's calendar
         B = year % 4;
-        // let’s take into account that the non-leap year is one day longer than 52 weeks
+        // let's take into account that the non-leap year is one day longer than 52 weeks
         C = year % 7;
         
         // M depends on the century of year Y. For 19th century, M = 23. For the 21st century, M = 24 and so on

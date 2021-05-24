@@ -47,26 +47,26 @@ public class GermanHolidayProvider extends CachingProvider {
     private GermanHolidayProvider() {
         // fill list of german holidays
         // see e.g. https://de.wikipedia.org/wiki/Gesetzliche_Feiertage_in_Deutschland
-        holidays.add(new PublicHolidayTemplate("Neujahr", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.JANUARY, 1), 0));
-        holidays.add(new PublicHolidayTemplate("Heilige Drei K\u00d6nige", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.JANUARY, 6), 0));
-        holidays.add(new PublicHolidayTemplate("Frauentag", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.MARCH, 8), 0));
-        holidays.add(new PublicHolidayTemplate("Karfreitag", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, -2));
-        holidays.add(new PublicHolidayTemplate("Ostersonntag", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 0));
-        holidays.add(new PublicHolidayTemplate("Ostermontag", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 1));
-        holidays.add(new PublicHolidayTemplate("1. Mai", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.MAY, 1), 0));
-        holidays.add(new PublicHolidayTemplate("Himmelfahrt", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 39));
-        holidays.add(new PublicHolidayTemplate("Pfingstsonntag", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 49));
-        holidays.add(new PublicHolidayTemplate("Pfingstmontag", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 50));
-        holidays.add(new PublicHolidayTemplate("Fronleichnam", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 60));
-        holidays.add(new PublicHolidayTemplate("Augsburger Friedensfest", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.AUGUST, 8), 0));
-        holidays.add(new PublicHolidayTemplate("Mari\u00e4 Himmelfahrt", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.AUGUST, 15), 0));
-        holidays.add(new PublicHolidayTemplate("Weltkindertag", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.SEPTEMBER, 20), 0));
-        holidays.add(new PublicHolidayTemplate("Tag der Deutschen Einheit", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.OCTOBER, 3), 0));
-        holidays.add(new PublicHolidayTemplate("Reformationstag", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.OCTOBER, 31), 0));
-        holidays.add(new PublicHolidayTemplate("Allerheiligen", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.NOVEMBER, 1), 0));
-        holidays.add(new PublicHolidayTemplate("Bu\u00df- und Bettag", PublicHolidayTemplate.HolidayType.PREV_WEDNESDAY, LocalDate.of(0, Month.NOVEMBER, 23), 0));
-        holidays.add(new PublicHolidayTemplate("1. Weihnachtstag", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.DECEMBER, 25), 0));
-        holidays.add(new PublicHolidayTemplate("2. Weihnachtstag", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.DECEMBER, 26), 0));
+        holidays.add(new PublicHolidayTemplate("Neujahr (DE)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.JANUARY, 1), 0));
+        holidays.add(new PublicHolidayTemplate("Heilige Drei K\u00f6nige (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.JANUARY, 6), 0));
+        holidays.add(new PublicHolidayTemplate("Frauentag (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.MARCH, 8), 0));
+        holidays.add(new PublicHolidayTemplate("Karfreitag (DE)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, -2));
+        holidays.add(new PublicHolidayTemplate("Ostersonntag (de)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 0));
+        holidays.add(new PublicHolidayTemplate("Ostermontag (DE)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 1));
+        holidays.add(new PublicHolidayTemplate("1. Mai (DE)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.MAY, 1), 0));
+        holidays.add(new PublicHolidayTemplate("Himmelfahrt (DE)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 39));
+        holidays.add(new PublicHolidayTemplate("Pfingstsonntag (de)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 49));
+        holidays.add(new PublicHolidayTemplate("Pfingstmontag (DE)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 50));
+        holidays.add(new PublicHolidayTemplate("Fronleichnam (de)", PublicHolidayTemplate.HolidayType.EASTER_BASED, null, 60));
+        holidays.add(new PublicHolidayTemplate("Augsburger Friedensfest (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.AUGUST, 8), 0));
+        holidays.add(new PublicHolidayTemplate("Mari\u00e4 Himmelfahrt (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.AUGUST, 15), 0));
+        holidays.add(new PublicHolidayTemplate("Weltkindertag (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.SEPTEMBER, 20), 0));
+        holidays.add(new PublicHolidayTemplate("Tag der Deutschen Einheit (DE)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.OCTOBER, 3), 0));
+        holidays.add(new PublicHolidayTemplate("Reformationstag (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.OCTOBER, 31), 0));
+        holidays.add(new PublicHolidayTemplate("Allerheiligen (de)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.NOVEMBER, 1), 0));
+        holidays.add(new PublicHolidayTemplate("Bu\u00df- und Bettag (de)", PublicHolidayTemplate.HolidayType.PREV_WEDNESDAY, LocalDate.of(0, Month.NOVEMBER, 23), 0));
+        holidays.add(new PublicHolidayTemplate("1. Weihnachtstag (DE)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.DECEMBER, 25), 0));
+        holidays.add(new PublicHolidayTemplate("2. Weihnachtstag (DE)", PublicHolidayTemplate.HolidayType.FIXED_DATE, LocalDate.of(0, Month.DECEMBER, 26), 0));
     }
     
     public static GermanHolidayProvider getInstance() {

@@ -27,6 +27,7 @@ package tf.helper.javafx.calendarview;
 
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.Locale;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -53,7 +54,11 @@ public class TestCalendarView extends Application {
         calendar2.setMarkToday(false);
         final CalendarView calendar3 = new CalendarView(YearMonth.of(2021, Month.DECEMBER), new CalenderViewOptions().setShowWeekNumber(false));
 
-        final CalendarView calendar4 = new CalendarView(YearMonth.now(), new CalenderViewOptions().setAdditionalMonths(2));
+        // this is a german calendar
+        final CalendarView calendar4 = new CalendarView(YearMonth.now(), new CalenderViewOptions().setAdditionalMonths(2).setLocale(Locale.GERMANY));
+        // show german holidays in calendar
+        HolidayProviderFactory.getInstance().registerHolidayProvider(Locale.GERMANY, GermanHolidayProvider.getInstance());
+        calendar4.addCalendarProvider(HolidayProviderFactory.getInstance());
         
         final Text dragLbl = new Text("Drag Me");
         dragLbl.setOnDragDetected((t) -> {

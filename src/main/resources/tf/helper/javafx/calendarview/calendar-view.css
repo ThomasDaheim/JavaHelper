@@ -90,6 +90,10 @@ calendar-header-button:hover {
     -fx-background-color: #eeeeee ;
 }
 
+.calendar-cell:date-holiday {
+    -fx-background-color: moccasin;
+}
+
 .calendar-weeknum {
     -fx-font-size: 0.7em;
     -fx-font-weight: bold ;
@@ -136,4 +140,8 @@ calendar-header-button:hover {
     -fx-shape: "M 0 0 h 7 l -3.5 4 z";
 */
     -fx-shape: null;
+}
+
+.calendar-tooltip {
+    -fx-font-size: 0.9em;
 }

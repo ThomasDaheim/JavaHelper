@@ -71,6 +71,12 @@ public class CalendarViewEvent extends Event {
             CalendarViewEvent.CALENDAR_CHANGED, "FORCED_REBUILD");
 
     /**
+     * An event type used to inform the application that the calendar layout has changed.
+     */
+    public static final EventType<CalendarViewEvent> PROVIDER_CHANGED = new EventType<>(
+            CalendarViewEvent.CALENDAR_CHANGED, "PROVIDER_CHANGED");
+
+    /**
      * An event type used to inform the application that "something" was dropped on a day
      * of the calendar.
      */
