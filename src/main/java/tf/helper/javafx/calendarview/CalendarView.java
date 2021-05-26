@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import static java.util.Objects.requireNonNull;
+import javafx.beans.Observable;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
@@ -46,6 +47,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.css.PseudoClass;
 import javafx.event.Event;
@@ -97,7 +99,12 @@ public class CalendarView implements EventTarget {
     
     private final IntegerProperty additionalMonths = new SimpleIntegerProperty(0);
     
-    private final List<ICalendarProvider> providers = new ArrayList<>();
+    // list of all event calendarProviders that we ask for calendarEvents
+    private final ObservableList<ICalendarProvider> calendarProviders = FXCollections.<ICalendarProvider>observableArrayList();
+    
+    // list of all calendarEvents, stored via property extractor in order to react to any changes with a rebuild
+    private final ObservableList<ICalendarEvent> calendarEvents = 
+            FXCollections.<ICalendarEvent>observableArrayList(p -> new Observable[]{p.getStartDate(), p.getEndDate(), p.getDescription(), p.getStyle()});    
     
     public enum DateStyle {
         DATE_SATURDAY(PseudoClass.getPseudoClass("date-saturday")),
@@ -144,23 +151,37 @@ public class CalendarView implements EventTarget {
         setShowWeekNumber(options.isShowWeekNumber());
         setAdditionalMonths(options.getAdditionalMonths());
 
-        this.monthProperty.addListener((obs, oldMonth, newMonth) -> 
-            rebuildCalendar(CalendarViewEvent.MONTH_CHANGED));
+        monthProperty.addListener((obs, oldMonth, newMonth) -> 
+            rebuildCalendar(CalendarViewEvent.MONTH_CHANGED, null));
         
-        this.localeProperty.addListener((obs, oldLocale, newLocale) -> 
-            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED));
+        localeProperty.addListener((obs, oldLocale, newLocale) -> 
+            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED, null));
         
-        this.markToday.addListener((obs, oldLocale, newLocale) -> 
-            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED));
+        markToday.addListener((obs, oldLocale, newLocale) -> 
+            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED, null));
         
-        this.markWeekends.addListener((obs, oldLocale, newLocale) -> 
-            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED));
+        markWeekends.addListener((obs, oldLocale, newLocale) -> 
+            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED, null));
         
-        this.showWeekNumber.addListener((obs, oldLocale, newLocale) -> 
-            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED));
+        showWeekNumber.addListener((obs, oldLocale, newLocale) -> 
+            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED, null));
         
-        this.additionalMonths.addListener((obs, oldLocale, newLocale) -> 
-            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED));
+        additionalMonths.addListener((obs, oldLocale, newLocale) -> 
+            rebuildCalendar(CalendarViewEvent.LAYOUT_CHANGED, null));
+
+        calendarProviders.addListener(new ListChangeListener<>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends ICalendarProvider> change) {
+                rebuildCalendar(CalendarViewEvent.PROVIDER_CHANGED, change);
+            }
+        });
+
+        calendarEvents.addListener(new ListChangeListener<>() {
+            @Override
+            public void onChanged(ListChangeListener.Change<? extends ICalendarEvent> change) {
+                rebuildCalendar(CalendarViewEvent.EVENT_CHANGED, change);
+            }
+        });
 
         view.setContent(calendar);
         
@@ -173,7 +194,7 @@ public class CalendarView implements EventTarget {
     }
     
     public void rebuildCalendar() {
-        rebuildCalendar(CalendarViewEvent.FORCED_REBUILD);
+        rebuildCalendar(CalendarViewEvent.FORCED_REBUILD, null);
     }
     
     public void nextMonth() {
@@ -184,7 +205,7 @@ public class CalendarView implements EventTarget {
         monthProperty.set(monthProperty.get().minusMonths(1));
     }
     
-    private void rebuildCalendar(final EventType<CalendarViewEvent> changeReason) {
+    private void rebuildCalendar(final EventType<CalendarViewEvent> changeReason, final ListChangeListener.Change<?> change) {
         calendar.getChildren().clear();
         
         // loop through the additional months and add all calendars to grid - with proper offset
@@ -207,7 +228,7 @@ public class CalendarView implements EventTarget {
         }
 
         // go, tell it to the mountains
-        fireEvent(new CalendarViewEvent(changeReason, this));
+        fireEvent(new CalendarViewEvent(changeReason, this, change));
     }
 
     private void addCalendar(final YearMonth month, final int calendarOffset) {
@@ -261,8 +282,11 @@ public class CalendarView implements EventTarget {
             GridPane.setHalignment(label, HPos.CENTER);
             calendar.add(label, dayOfWeek - 1 + colOffset, weeksSinceFirstDisplayed + rowOffset);
             
-            // check providers if any styles to apply
+            // check calendarProviders if any styles to apply
             applyProviderStyles(date, label);
+            
+            // check if any calendarEvents on that date
+            applyEventStyles(date, label);
 
             // in case of weeknum change add it in the first column
             if (showWeekNumber.get()) {
@@ -422,12 +446,38 @@ public class CalendarView implements EventTarget {
     
     private void applyProviderStyles(final LocalDate date, final Label label) {
         String toolText = "";
-        for (ICalendarProvider provider : providers) {
-            final List<ICalenderEvent> events = provider.getCalendarEvents(localeProperty.get(), date, date).get(date);
-            if (events == null || events.isEmpty()) {
+        for (ICalendarProvider provider : calendarProviders) {
+            final List<ICalendarEvent> providerEvents = provider.getCalendarEvents(localeProperty.get(), date, date).get(date);
+            if (providerEvents == null || providerEvents.isEmpty()) {
                 continue;
             }
-            for (ICalenderEvent event : events) {
+            for (ICalendarEvent event : providerEvents) {
+                label.pseudoClassStateChanged(event.getStyle().get().getPseudoClass(), true);
+                if (!toolText.isEmpty()) {
+                    toolText += ", ";
+                }
+                toolText += event.getDescription().get();
+            }
+        }
+        if (!toolText.isEmpty()) {
+            Tooltip tooltip = label.getTooltip();
+            if (tooltip == null) {
+                tooltip = new Tooltip(toolText);
+                tooltip.getStyleClass().add("calendar-tooltip");
+                TooltipHelper.updateTooltipBehavior(tooltip, 0, 10000, 0, true);
+            } else {
+                tooltip.setText(tooltip.getText() + "; " + toolText);
+            }
+            label.setTooltip(tooltip);
+        }
+    }
+    
+    private void applyEventStyles(final LocalDate date, final Label label) {
+        String toolText = "";
+        for (ICalendarEvent event : calendarEvents) {
+            // date is either between start end or @ start or end
+            if ((date.isAfter(event.getStartDate().get()) && date.isBefore(event.getEndDate().get()))
+                    || date.equals(event.getStartDate().get()) || date.equals(event.getEndDate().get())) {
                 label.pseudoClassStateChanged(event.getStyle().get().getPseudoClass(), true);
                 if (!toolText.isEmpty()) {
                     toolText += ", ";
@@ -512,17 +562,23 @@ public class CalendarView implements EventTarget {
         additionalMonths.set(months);
     }
     
-    public void addCalendarProvider(final ICalendarProvider provider) {
-        providers.add(provider);
-        rebuildCalendar(CalendarViewEvent.PROVIDER_CHANGED);
+    public void addCalendarProviders(final List<ICalendarProvider> providers) {
+        calendarProviders.addAll(providers);
     }
     
-    public void removeCalendarProvider(final ICalendarProvider provider) {
-        providers.remove(provider);
-        rebuildCalendar(CalendarViewEvent.PROVIDER_CHANGED);
+    public void removeCalendarProviders(final List<ICalendarProvider> providers) {
+        calendarProviders.removeAll(providers);
     }
     
-    // support for calendar events
+    public void addCalendarEvents(final List<ICalendarEvent> evts) {
+        calendarEvents.addAll(evts);
+    }
+    
+    public void removeCalendarEvents(final List<ICalendarEvent> evts) {
+        calendarEvents.removeAll(evts);
+    }
+    
+    // support for calendar calendarEvents
     // based on CalendarFX
 
     private final ObservableList<EventHandler<CalendarViewEvent>> eventHandlers = FXCollections.observableArrayList();
@@ -573,5 +629,4 @@ public class CalendarView implements EventTarget {
             return event;
         });
     }
-
 }

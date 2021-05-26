@@ -56,7 +56,7 @@ public class TestGermanHolidayProvider {
     
     @Test
     public void TestProviderFullYearFixedDates() {
-        final Map<LocalDate, List<ICalenderEvent>> events = provider.getCalendarEvents(Locale.GERMANY, yearStart, yearEnd);
+        final Map<LocalDate, List<ICalendarEvent>> events = provider.getCalendarEvents(Locale.GERMANY, yearStart, yearEnd);
         
         // events should be size of holiday templates
         Assert.assertEquals(events.size(), holidays.size());
@@ -76,7 +76,7 @@ public class TestGermanHolidayProvider {
 
         final LocalDate otherYear = LocalDate.of(1900, Month.FEBRUARY, 13);
         
-        final Map<LocalDate, List<ICalenderEvent>> events = provider.getCalendarEvents(Locale.GERMANY, otherYear, otherYear);
+        final Map<LocalDate, List<ICalendarEvent>> events = provider.getCalendarEvents(Locale.GERMANY, otherYear, otherYear);
 
         // nothing ever happened that day
         Assert.assertTrue(events.isEmpty());
@@ -89,11 +89,11 @@ public class TestGermanHolidayProvider {
     public void TestProviderEasterDates() {
         // easter date for year of writing this code :-)
         LocalDate easterDate = LocalDate.of(2021, Month.APRIL, 4);
-        Map<LocalDate, List<ICalenderEvent>> events = provider.getCalendarEvents(Locale.GERMANY, easterDate, easterDate);
+        Map<LocalDate, List<ICalendarEvent>> events = provider.getCalendarEvents(Locale.GERMANY, easterDate, easterDate);
         Assert.assertTrue(!events.isEmpty());
         Assert.assertTrue(events.containsKey(easterDate));
         Assert.assertEquals(1, events.get(easterDate).size());
-        Assert.assertEquals("Ostersonntag", events.get(easterDate).get(0).getDescription().get());
+        Assert.assertEquals("Ostersonntag (de)", events.get(easterDate).get(0).getDescription().get());
 
         // corpus christi date for year of writing this code :-)
         easterDate = LocalDate.of(2021, Month.JUNE, 3);
@@ -101,6 +101,6 @@ public class TestGermanHolidayProvider {
         Assert.assertTrue(!events.isEmpty());
         Assert.assertTrue(events.containsKey(easterDate));
         Assert.assertEquals(1, events.get(easterDate).size());
-        Assert.assertEquals("Fronleichnam", events.get(easterDate).get(0).getDescription().get());
+        Assert.assertEquals("Fronleichnam (de)", events.get(easterDate).get(0).getDescription().get());
     }
 }

@@ -36,5 +36,5 @@ import java.util.Map;
  * @author thomas
  */
 public interface ICalendarProvider {
-   public Map<LocalDate, List<ICalenderEvent>> getCalendarEvents(final Locale locale, final LocalDate startDate, final LocalDate endDate);
+   public Map<LocalDate, List<ICalendarEvent>> getCalendarEvents(final Locale locale, final LocalDate startDate, final LocalDate endDate);
 }

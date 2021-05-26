@@ -26,43 +26,47 @@
 package tf.helper.javafx.calendarview;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 /**
- * Class to register holiday providers for Locale.IsoCountryCode values
+ * A minimal implementation of a calendar event.
+ * 
  * @author thomas
  */
-public class HolidayProviderFactory implements ICalendarProvider {
-    private final static HolidayProviderFactory INSTANCE = new HolidayProviderFactory();
-    
-    private Map<String, ICalendarProvider> providers = new HashMap<>();
-    
-    private HolidayProviderFactory() {
+public class SimpleDayEvent implements ICalendarEvent {
+    private final ObjectProperty<CalendarView.DateStyle> myStyle = new SimpleObjectProperty<>();
+    private final ObjectProperty<LocalDate> myDate = new SimpleObjectProperty<>();
+    private final StringProperty myDescription = new SimpleStringProperty();
+
+    private SimpleDayEvent() {
     }
-    
-    public static HolidayProviderFactory getInstance() {
-        return INSTANCE;
+
+    public SimpleDayEvent(final LocalDate date, final String desc, final CalendarView.DateStyle style) {
+        myDate.set(date);
+        myDescription.set(desc);
+        myStyle.set(style);
     }
-    
-    public void registerHolidayProvider(final Locale locale, final ICalendarProvider provider) {
-        providers.put(locale.getISO3Country(), provider);
-    }
-    
-    public void unregisterHolidayProvider(final Locale locale) {
-        providers.remove(locale.getISO3Country());
-    }
-    
+
     @Override
-    public Map<LocalDate, List<ICalendarEvent>> getCalendarEvents(final Locale locale, final LocalDate startDate, final LocalDate endDate) {
-        final ICalendarProvider provider = providers.get(locale.getISO3Country());
-        
-        if (provider != null) {
-            return provider.getCalendarEvents(locale, startDate, endDate);
-        } else {
-            return new HashMap<>();
-        }
+    public ObjectProperty<LocalDate> getStartDate() {
+        return myDate;
+    }
+
+    @Override
+    public ObjectProperty<LocalDate> getEndDate() {
+        return myDate;
+    }
+
+    @Override
+    public ObjectProperty<CalendarView.DateStyle> getStyle() {
+        return myStyle;
+    }
+
+    @Override
+    public StringProperty getDescription() {
+        return myDescription;
     }
 }

@@ -38,11 +38,11 @@ import javafx.collections.ObservableList;
  * @author thomas
  */
 public abstract class CachingProvider implements ICalendarProvider {
-    private final Map<LocalDate, List<ICalenderEvent>> eventCache = new HashMap<>();
+    private final Map<LocalDate, List<ICalendarEvent>> eventCache = new HashMap<>();
     private final List<LocalDate> cachedDates = new ArrayList<>();
     
     protected abstract boolean isValidLocale(final Locale locale);
-    protected abstract Map<LocalDate, List<ICalenderEvent>> getCalendarEventsForCache(final Locale locale, final LocalDate startDate, final LocalDate endDate);
+    protected abstract Map<LocalDate, List<ICalendarEvent>> getCalendarEventsForCache(final Locale locale, final LocalDate startDate, final LocalDate endDate);
     
     protected List<LocalDate> getCachedDates() {
         return cachedDates;
@@ -56,17 +56,17 @@ public abstract class CachingProvider implements ICalendarProvider {
     }
     
     @Override
-    public Map<LocalDate, List<ICalenderEvent>> getCalendarEvents(final Locale locale, final LocalDate startDate, final LocalDate endDate) {
+    public Map<LocalDate, List<ICalendarEvent>> getCalendarEvents(final Locale locale, final LocalDate startDate, final LocalDate endDate) {
         if (!isValidLocale(locale)) {
             return new HashMap<>();
         }
         
-        final Map<LocalDate, List<ICalenderEvent>> result = new HashMap<>();
+        final Map<LocalDate, List<ICalendarEvent>> result = new HashMap<>();
         
         for (LocalDate date = startDate; date.isBefore(endDate.plusDays(1)); date = date.plusDays(1)) {
             // not yet in cache? lets add it!
             if (!isCachedDate(date) && !eventCache.containsKey(date)) {
-                final Map<LocalDate, List<ICalenderEvent>> events = getCalendarEventsForCache(locale, date, date);
+                final Map<LocalDate, List<ICalendarEvent>> events = getCalendarEventsForCache(locale, date, date);
                 eventCache.putAll(events);
                 cachedDates.addAll(events.keySet());
             }

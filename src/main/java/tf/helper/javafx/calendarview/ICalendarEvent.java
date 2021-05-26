@@ -36,7 +36,7 @@ import javafx.beans.property.StringProperty;
  * 
  * @author thomas
  */
-public interface ICalenderEvent {
+public interface ICalendarEvent {
     public ObjectProperty<LocalDate> getStartDate();
     public ObjectProperty<LocalDate> getEndDate();
     public ObjectProperty<CalendarView.DateStyle> getStyle();

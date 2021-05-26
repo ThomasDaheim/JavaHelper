@@ -64,7 +64,19 @@ calendar-header-button:hover {
 .calendar-cell:before-display-month:hover,
 .calendar-cell:after-display-month:hover,
 .calendar-cell:date-saturday:hover,
-.calendar-cell:date-sunday:hover {
+.calendar-cell:date-sunday:hover,
+.calendar-cell:date-holiday:hover,
+.calendar-cell:style-1:hover,
+.calendar-cell:style-2:hover,
+.calendar-cell:style-3:hover,
+.calendar-cell:style-4:hover,
+.calendar-cell:style-5:hover,
+.calendar-cell:style-6:hover,
+.calendar-cell:style-7:hover,
+.calendar-cell:style-8:hover,
+.calendar-cell:style-9:hover,
+.calendar-cell:style-10:hover
+{
     -fx-background-color: lightskyblue ;
 }
 
@@ -92,6 +104,37 @@ calendar-header-button:hover {
 
 .calendar-cell:date-holiday {
     -fx-background-color: moccasin;
+}
+
+.calendar-cell:style-1 {
+    -fx-background-color: aquamarine;
+}
+.calendar-cell:style-2 {
+    -fx-background-color: bisque;
+}
+.calendar-cell:style-3 {
+    -fx-background-color: chocolate;
+}
+.calendar-cell:style-4 {
+    -fx-background-color: cornflowerblue;
+}
+.calendar-cell:style-5 {
+    -fx-background-color: darkorange;
+}
+.calendar-cell:style-6 {
+    -fx-background-color: fuchsia;
+}
+.calendar-cell:style-7 {
+    -fx-background-color: greenyellow;
+}
+.calendar-cell:style-8 {
+    -fx-background-color: lightseagreen;
+}
+.calendar-cell:style-9 {
+    -fx-background-color: plum;
+}
+.calendar-cell:style-10 {
+    -fx-background-color: tomato;
 }
 
 .calendar-weeknum {

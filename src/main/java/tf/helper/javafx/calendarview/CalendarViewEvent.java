@@ -27,6 +27,7 @@ package tf.helper.javafx.calendarview;
 
 import java.time.LocalDate;
 import static java.util.Objects.requireNonNull;
+import javafx.collections.ListChangeListener;
 import javafx.event.Event;
 import javafx.event.EventType;
 
@@ -71,10 +72,16 @@ public class CalendarViewEvent extends Event {
             CalendarViewEvent.CALENDAR_CHANGED, "FORCED_REBUILD");
 
     /**
-     * An event type used to inform the application that the calendar layout has changed.
+     * An event type used to inform the application that the list of event providers has changed.
      */
     public static final EventType<CalendarViewEvent> PROVIDER_CHANGED = new EventType<>(
             CalendarViewEvent.CALENDAR_CHANGED, "PROVIDER_CHANGED");
+
+    /**
+     * An event type used to inform the application that the list of events has changed.
+     */
+    public static final EventType<CalendarViewEvent> EVENT_CHANGED = new EventType<>(
+            CalendarViewEvent.CALENDAR_CHANGED, "EVENT_CHANGED");
 
     /**
      * An event type used to inform the application that "something" was dropped on a day
@@ -86,9 +93,10 @@ public class CalendarViewEvent extends Event {
     private final CalendarView calendar;
     private Object droppedObject = null;
     private LocalDate dropDate = null;
+    private ListChangeListener.Change<?> change = null;
 
     /**
-     * Constructs a new event for subclass.
+     * Constructs a new event.
      *
      * @param eventType the event type
      * @param cal       the calendar where the event occurred.
@@ -98,6 +106,22 @@ public class CalendarViewEvent extends Event {
         super(cal, cal, eventType);
 
         calendar = requireNonNull(cal);
+    }
+
+    /**
+     * Constructs a new event.
+     *
+     * @param eventType the event type
+     * @param cal       the calendar where the event occurred
+     * @param chng      the list change that occured
+     */
+    protected CalendarViewEvent(EventType<? extends CalendarViewEvent> eventType,
+                            CalendarView cal, ListChangeListener.Change<?> chng) {
+        super(cal, cal, eventType);
+
+        calendar = requireNonNull(cal);
+        // chng can be null
+        change = chng;
     }
 
     /**

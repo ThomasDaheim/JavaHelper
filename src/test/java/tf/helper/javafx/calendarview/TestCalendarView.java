@@ -25,8 +25,10 @@
  */
 package tf.helper.javafx.calendarview;
 
+import java.time.LocalDate;
 import java.time.Month;
 import java.time.YearMonth;
+import java.util.Arrays;
 import java.util.Locale;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -56,9 +58,8 @@ public class TestCalendarView extends Application {
 
         // this is a german calendar
         final CalendarView calendar4 = new CalendarView(YearMonth.now(), new CalenderViewOptions().setAdditionalMonths(2).setLocale(Locale.GERMANY));
-        // show german holidays in calendar
-        HolidayProviderFactory.getInstance().registerHolidayProvider(Locale.GERMANY, GermanHolidayProvider.getInstance());
-        calendar4.addCalendarProvider(HolidayProviderFactory.getInstance());
+        calendar4.getCalendarView().getStylesheets().add(getClass().getResource("/tf/helper/javafx/calendarview/TestCalendarView.css").toExternalForm());
+
         
         final Text dragLbl = new Text("Drag Me");
         dragLbl.setOnDragDetected((t) -> {
@@ -101,6 +102,16 @@ public class TestCalendarView extends Application {
         calendar2.addEventHandler(testHandler);
         calendar3.addEventHandler(testHandler);
         calendar4.addEventHandler(testHandler);
+
+        // show german holidays in calendar
+        HolidayProviderFactory.getInstance().registerHolidayProvider(Locale.GERMANY, GermanHolidayProvider.getInstance());
+        calendar4.addCalendarProviders(Arrays.asList(HolidayProviderFactory.getInstance()));
+        
+        // add events before / after today to calendar
+        final SimpleDayEvent dayBefore = new SimpleDayEvent(LocalDate.now().minusDays(1), "Yesterday", CalendarView.DateStyle.STYLE_9);
+        final SimpleDayEvent dayAfter = new SimpleDayEvent(LocalDate.now().plusDays(1), "Tomorrow", CalendarView.DateStyle.STYLE_10);
+        calendar1.addCalendarEvents(Arrays.asList(dayBefore, dayAfter));
+        calendar4.addCalendarEvents(Arrays.asList(dayBefore, dayAfter));
     }
     
     @Test

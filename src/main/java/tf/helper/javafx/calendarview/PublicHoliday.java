@@ -36,7 +36,7 @@ import javafx.beans.property.StringProperty;
  * 
  * @author thomas
  */
-public class PublicHoliday implements ICalenderEvent {
+public class PublicHoliday implements ICalendarEvent {
     public final static ObjectProperty<CalendarView.DateStyle> style = new SimpleObjectProperty<>(CalendarView.DateStyle.DATE_HOLIDAY);
     private final ObjectProperty<LocalDate> holidayDate = new SimpleObjectProperty<>();
     private final StringProperty description = new SimpleStringProperty();

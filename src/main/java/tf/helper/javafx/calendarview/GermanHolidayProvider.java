@@ -89,9 +89,9 @@ public class GermanHolidayProvider extends CachingProvider {
     }
 
     @Override
-    protected Map<LocalDate, List<ICalenderEvent>> getCalendarEventsForCache(Locale locale, LocalDate startDate, LocalDate endDate) {
+    protected Map<LocalDate, List<ICalendarEvent>> getCalendarEventsForCache(Locale locale, LocalDate startDate, LocalDate endDate) {
         // calculation of german holidays - always calculate full year...
-        final Map<LocalDate, List<ICalenderEvent>> result = new HashMap<>();
+        final Map<LocalDate, List<ICalendarEvent>> result = new HashMap<>();
         
         // could be a span longer than one year...
         for (int year = startDate.getYear(); year <= endDate.getYear(); year++) {
@@ -101,8 +101,8 @@ public class GermanHolidayProvider extends CachingProvider {
         return result;
     }
     
-    private Map<LocalDate, List<ICalenderEvent>> getHolidaysForYear(final int year) {
-        final Map<LocalDate, List<ICalenderEvent>> result = new HashMap<>();
+    private Map<LocalDate, List<ICalendarEvent>> getHolidaysForYear(final int year) {
+        final Map<LocalDate, List<ICalendarEvent>> result = new HashMap<>();
         
         // calculate easter sunday for year
         final LocalDate easterSunday = PublicHolidayTemplate.calculateEasterSunday(year);
