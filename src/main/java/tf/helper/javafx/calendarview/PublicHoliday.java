@@ -65,7 +65,7 @@ public class PublicHoliday implements ICalendarEvent {
     }
 
     @Override
-    public StringProperty getDescription() {
+    public StringProperty getEventDescription() {
         return description;
     }
 }

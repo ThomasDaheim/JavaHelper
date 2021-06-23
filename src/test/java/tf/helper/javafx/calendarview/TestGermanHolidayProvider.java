@@ -93,7 +93,7 @@ public class TestGermanHolidayProvider {
         Assert.assertTrue(!events.isEmpty());
         Assert.assertTrue(events.containsKey(easterDate));
         Assert.assertEquals(1, events.get(easterDate).size());
-        Assert.assertEquals("Ostersonntag (de)", events.get(easterDate).get(0).getDescription().get());
+        Assert.assertEquals("Ostersonntag (de)", events.get(easterDate).get(0).getEventDescription().get());
 
         // corpus christi date for year of writing this code :-)
         easterDate = LocalDate.of(2021, Month.JUNE, 3);
@@ -101,6 +101,6 @@ public class TestGermanHolidayProvider {
         Assert.assertTrue(!events.isEmpty());
         Assert.assertTrue(events.containsKey(easterDate));
         Assert.assertEquals(1, events.get(easterDate).size());
-        Assert.assertEquals("Fronleichnam (de)", events.get(easterDate).get(0).getDescription().get());
+        Assert.assertEquals("Fronleichnam (de)", events.get(easterDate).get(0).getEventDescription().get());
     }
 }

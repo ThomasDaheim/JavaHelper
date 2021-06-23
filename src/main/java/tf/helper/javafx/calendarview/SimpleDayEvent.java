@@ -66,7 +66,7 @@ public class SimpleDayEvent implements ICalendarEvent {
     }
 
     @Override
-    public StringProperty getDescription() {
+    public StringProperty getEventDescription() {
         return myDescription;
     }
 }

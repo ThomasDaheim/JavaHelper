@@ -56,6 +56,7 @@ import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.geometry.HPos;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -104,7 +105,9 @@ public class CalendarView implements EventTarget {
     
     // list of all calendarEvents, stored via property extractor in order to react to any changes with a rebuild
     private final ObservableList<ICalendarEvent> calendarEvents = 
-            FXCollections.<ICalendarEvent>observableArrayList(p -> new Observable[]{p.getStartDate(), p.getEndDate(), p.getDescription(), p.getStyle()});    
+            FXCollections.<ICalendarEvent>observableArrayList(p -> new Observable[]{p.getStartDate(), p.getEndDate(), p.getEventDescription(), p.getStyle()});
+    
+    private final static PseudoClass HOVER = PseudoClass.getPseudoClass("hover");
     
     public enum DateStyle {
         DATE_SATURDAY(PseudoClass.getPseudoClass("date-saturday")),
@@ -140,6 +143,7 @@ public class CalendarView implements EventTarget {
         
         calendar = new GridPane();
         calendar.getStyleClass().add("calendar-grid");
+        calendar.setAlignment(Pos.CENTER);
         GridPane.setHgrow(calendar, Priority.ALWAYS);
         GridPane.setVgrow(calendar, Priority.ALWAYS);   
         
@@ -316,6 +320,13 @@ public class CalendarView implements EventTarget {
             label.pseudoClassStateChanged(DateStyle.DATE_TODAY.getPseudoClass(), date.equals(LocalDate.now()));
         }
         label.setUserData(date);
+        // TFE, 20210623: hover not set during drag & drop operations...
+        label.setOnDragEntered((t) -> {
+            label.pseudoClassStateChanged(HOVER, true);
+        });
+        label.setOnDragExited((t) -> {
+            label.pseudoClassStateChanged(HOVER, false);
+        });
         label.setOnDragOver((t) -> {
             t.acceptTransferModes(TransferMode.ANY);
             t.consume();
@@ -456,7 +467,7 @@ public class CalendarView implements EventTarget {
                 if (!toolText.isEmpty()) {
                     toolText += ", ";
                 }
-                toolText += event.getDescription().get();
+                toolText += event.getEventDescription().get();
             }
         }
         if (!toolText.isEmpty()) {
@@ -475,6 +486,11 @@ public class CalendarView implements EventTarget {
     private void applyEventStyles(final LocalDate date, final Label label) {
         String toolText = "";
         for (ICalendarEvent event : calendarEvents) {
+            if (event.getStartDate() == null || event.getStartDate().get() == null ||
+                    event.getEndDate() == null || event.getEndDate().get() == null) {
+                // nothing to do for this event...
+                continue;
+            }
             // date is either between start end or @ start or end
             if ((date.isAfter(event.getStartDate().get()) && date.isBefore(event.getEndDate().get()))
                     || date.equals(event.getStartDate().get()) || date.equals(event.getEndDate().get())) {
@@ -482,7 +498,7 @@ public class CalendarView implements EventTarget {
                 if (!toolText.isEmpty()) {
                     toolText += ", ";
                 }
-                toolText += event.getDescription().get();
+                toolText += event.getEventDescription().get();
             }
         }
         if (!toolText.isEmpty()) {
