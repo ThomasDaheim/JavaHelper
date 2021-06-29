@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import javafx.collections.ObservableList;
 
 /**
  * Implementation of basic cashing of calendar events. Only add, don't remove events.

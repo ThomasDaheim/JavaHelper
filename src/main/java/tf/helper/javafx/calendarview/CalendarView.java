@@ -34,12 +34,10 @@ import java.time.format.TextStyle;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import static java.util.Objects.requireNonNull;
 import javafx.beans.Observable;
-
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
