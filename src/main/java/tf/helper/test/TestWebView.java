@@ -51,7 +51,7 @@ public class TestWebView extends Application {
         
         final WebView geoLocation = new WebView();
         // https://www.w3schools.com/html/html5_geolocation.asp
-        final String editor_script = TestWebView.class.getResource("/geolocation.html").toExternalForm();
+        final String editor_script = TestWebView.class.getResource("/tf/helper/test/geolocation.html").toExternalForm();
         geoLocation.getEngine().load(editor_script);
 
         final VBox vBox = new VBox(HTML5Test, geoLocation);
