@@ -56,22 +56,6 @@ dependencies {
 //    def javafx_version='14'
 //    def javafx_version='15.0.1'
     def javafx_version='17.0.1'
-<<<<<<< HEAD
-    compile "org.openjfx:javafx-base:$javafx_version:$platform"
-    compile "org.openjfx:javafx-graphics:$javafx_version:$platform"
-    compile "org.openjfx:javafx-controls:$javafx_version:$platform"
-    compile "org.openjfx:javafx-fxml:$javafx_version:$platform"
-    compile "org.openjfx:javafx-swing:$javafx_version:$platform"
-    compile "org.openjfx:javafx-web:$javafx_version:$platform"
-    compile "org.openjfx:javafx-media:$javafx_version:$platform"
-
-    compile 'commons-io:commons-io:2.6'
-    compile 'org.apache.commons:commons-lang3:3.9'
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.15'
-
-    compile group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
-    compile group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.14'
-=======
     implementation "org.openjfx:javafx-base:$javafx_version:$platform"
     implementation "org.openjfx:javafx-graphics:$javafx_version:$platform"
     implementation "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -86,7 +70,6 @@ dependencies {
 
     implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
     implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.14'
->>>>>>> origin/NoRestForTheWicked
    
     testImplementation "org.testfx:testfx-junit:4.0.+"
     testImplementation "org.testfx:testfx-core:4.0.+"
