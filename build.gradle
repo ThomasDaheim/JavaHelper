@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.google.osdetector'
-// apply plugin: 'maven' - removed for Gradle 7.*
+apply plugin: 'maven' // - to be removed for Gradle 7.*
 apply plugin: 'maven-publish'
 
 // see https://github.com/kelemen/netbeans-gradle-project/issues/179
@@ -43,9 +43,15 @@ group='tf.JavaHelper'
 version='1.14'
 
 repositories {
-    mavenLocal()
+    mavenLocal() {
+        // breaking change in gradle 6.*: doesn't find jar files automatically when no pom.xml is present...
+        // https://discuss.gradle.org/t/how-to-fetch-maven-artifact-without-pom-file-in-gradle-6-0/33836
+        metadataSources {
+            mavenPom()
+            artifact()
+        }
+    }
     mavenCentral()
-    jcenter()
     // You may define additional repositories, or even remove "mavenCentral()".
     // Read more about repositories here:
     //   http://www.gradle.org/docs/current/userguide/dependency_management.html#sec:repositories
@@ -54,8 +60,8 @@ repositories {
 dependencies {
 //    def javafx_version='11.0.2'
 //    def javafx_version='14'
-//    def javafx_version='15.0.1'
-    def javafx_version='17.0.1'
+    def javafx_version='15.0.1'
+//    def javafx_version='17.0.1'
     implementation "org.openjfx:javafx-base:$javafx_version:$platform"
     implementation "org.openjfx:javafx-graphics:$javafx_version:$platform"
     implementation "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -124,6 +130,14 @@ run {
 }
 
 test {
+    doFirst {
+        jvmArgs = jvmArgs.plus(['--module-path', classpath.asPath,])
+        jvmArgs = jvmArgs.plus(newArgs)
+        jvmArgs = jvmArgs.plus('-Xss80M')
+        jvmArgs = jvmArgs.plus('-Xmx4096M')
+        enableAssertions = true
+    }
+
     // https://stackoverflow.com/a/35467005
     testLogging.showStandardStreams true;   
 }
@@ -166,4 +180,4 @@ artifacts {
     archives sourcesJar
 }
 
-// build.finalizedBy(install)
+build.finalizedBy(installDist)
