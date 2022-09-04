@@ -51,9 +51,14 @@ public class ColorConverter {
     }
 
     // https://stackoverflow.com/a/56733608
+    // TFE, 20211201
+    // https://stackoverflow.com/a/13036015 - opacity is encoded in the KML color!
     public static String JavaFXtoKML(final Color color) {
+        return JavaFXtoKML(color, color.getOpacity());
+    }
+    public static String JavaFXtoKML(final Color color, final Double opacity) {
         // kml uses alpha + BGR
-        return "ff" + doubleToHex(color.getBlue()) + doubleToHex(color.getGreen()) + doubleToHex(color.getRed());
+        return (doubleToHex(opacity) + doubleToHex(color.getBlue()) + doubleToHex(color.getGreen()) + doubleToHex(color.getRed())).toUpperCase();
     }
 
     public static String JavaFXtoCSS(final Color color) {
@@ -61,6 +66,67 @@ public class ColorConverter {
     }
 
     public static String JavaFXtoRGBHex(final Color color) {
-        return (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue())).toUpperCase();
+        if (color.getOpacity() == 1.0) {
+            return (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue())).toUpperCase();
+        } else {
+            return (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue()) + doubleToHex(color.getOpacity())).toUpperCase();
+        }
+    }
+    
+    // TFE, 2021012: lets do the other way too
+    public static Color KMLToJavaFX(final String color) {
+        String inColor = color;
+        if (inColor == null) {
+            throw new IllegalArgumentException("Argument is null");
+        }
+        if (inColor.length() < 8) {
+            throw new IllegalArgumentException("Argument is to short: " + inColor);
+        }
+        
+        // handle opacity separately
+        final int hexOp = Integer.decode("#" + inColor.substring(0, 2));
+        final double o = (hexOp & 0xFF) / 255.0;
+
+        final int hexColor = Integer.decode("#" + inColor.substring(2));
+        final double b = ((hexColor & 0xFF0000) >> 16) / 255.0;
+        final double g = ((hexColor & 0xFF00) >> 8) / 255.0;
+        final double r = (hexColor & 0xFF) / 255.0;
+
+        return new Color(r, g, b, o);
+    }
+    
+    public static Color CSSToJavaFX(final String color) {
+        if (!color.startsWith("#")) {
+            throw new IllegalArgumentException("Argument doesn't start with '#'");
+        }
+            
+        return RGBHexToJavaFX(color);
+    }
+
+    public static Color RGBHexToJavaFX(final String color) {
+        String inColor = color;
+        if (inColor == null) {
+            throw new IllegalArgumentException("Argument is null");
+        }
+        if (inColor.startsWith("#")) {
+            inColor = inColor.substring(1);
+        }
+        if (inColor.length() < 6) {
+            throw new IllegalArgumentException("Argument is to short: " + inColor);
+        }
+        
+        // handle opacity separately - its optional
+        double o = 1.0;
+        if (inColor.length() == 8) {
+            final int hexOp = Integer.decode("#" + inColor.substring(6));
+            o = (hexOp & 0xFF) / 255.0;
+        }
+
+        final int hexColor = Integer.decode("#" + inColor.substring(0, 6));
+        final double r = ((hexColor & 0xFF0000) >> 16) / 255.0;
+        final double g = ((hexColor & 0xFF00) >> 8) / 255.0;
+        final double b = (hexColor & 0xFF) / 255.0;
+
+        return new Color(r, g, b, o);
     }
 }
