@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'com.google.osdetector'
-apply plugin: 'maven' // - to be removed for Gradle 7.*
+// apply plugin: 'maven' // - to be removed for Gradle 7.*
 apply plugin: 'maven-publish'
 
 // see https://github.com/kelemen/netbeans-gradle-project/issues/179
