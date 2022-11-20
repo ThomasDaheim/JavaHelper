@@ -28,7 +28,9 @@ package tf.helper.javafx;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.HostServices;
@@ -41,6 +43,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -48,6 +51,7 @@ import javafx.stage.Modality;
 import javafx.stage.Window;
 import javax.imageio.ImageIO;
 import tf.helper.general.AppInfo;
+import tf.helper.general.DependencyLoader;
 
 /**
  *
@@ -89,6 +93,8 @@ public class AboutMenu {
     
     private static final String MENU_ICON = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QAAKqNIzIAAAAJcEhZcwAADdcAAA3XAUIom3gAAAAHdElNRQfiChwRMw7JEGHfAAAAqklEQVQoz6XQr06CYRgF8B9/3GjQbejGCEaKSKER7AYj3ABjcCNegndhsBBIRBLJRnAjfI3hY/kUZe+bOOU5O+fsbOfhHI/WVm5k0PAphHk+UAhfOrK4t3DrEjQM1XLmtVeFME2ZFRN7IYTxSa7+splnLyXfpBpqeBJC4SrVcMQALB1SAXgA77kNLUchDLV1U4F+uWFpZ/Qj1v8EmuUNPR+phjtbbyb///gN164oLmafnJcAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTgtMTAtMjhUMTc6NTE6MTQrMDE6MDD/wi67AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE4LTEwLTI4VDE3OjUxOjE0KzAxOjAwjp+WBwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAAASUVORK5CYII=";
     private final Image menuIcon;
+    
+    private final static List<String> excludePatterns = Arrays.asList("java.", "javax.", "javafx.", "jdk.", "sun.", "com.sun.", "tf.");
     
     private AboutMenu() {
         super();
@@ -198,7 +204,8 @@ public class AboutMenu {
                 "\nBuild timestamp:\t" + buildTimestamp + 
                 "\nBuild JDK:\t\t\t" + buildJdk + 
                 "\nBuild OS:\t\t\t" + buildOS + 
-                "\nCreated by:\t\t" + createdBy);
+                "\nCreated by:\t\t" + createdBy + 
+                "\n\nDependencies:\n" + String.join("\n", DependencyLoader.getFilteredDependencies(excludePatterns)));
         pane.add(lbl5, 0, rowNum, 2, 1);
         
         alert.getDialogPane().contentProperty().set(pane);

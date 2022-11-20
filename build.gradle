@@ -2,9 +2,15 @@
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+          url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
-        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.7.0'
+        // https://github.com/ben-manes/gradle-versions-plugin
+        // task: dependencyUpdates
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.42.0'
     }
 }
 
@@ -13,6 +19,7 @@ apply plugin: 'application'
 apply plugin: 'com.google.osdetector'
 // apply plugin: 'maven' // - to be removed for Gradle 7.*
 apply plugin: 'maven-publish'
+apply plugin: 'distribution'
 
 // see https://github.com/kelemen/netbeans-gradle-project/issues/179
 apply plugin: 'idea'
@@ -40,7 +47,8 @@ if (!hasProperty('mainClass')) {
 mainClassName = 'tf.helper.test.TestWebView'
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.14'
+version='1.15'
+description = 'Helper for all ThomasDaheim Java applications'
 
 repositories {
     mavenLocal() {
@@ -180,4 +188,12 @@ artifacts {
     archives sourcesJar
 }
 
-build.finalizedBy(installDist)
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+build.finalizedBy(installDist, publishToMavenLocal)
