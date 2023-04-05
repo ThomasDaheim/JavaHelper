@@ -7,10 +7,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.google.gradle:osdetector-gradle-plugin:1.7.0'
+        classpath 'com.google.gradle:osdetector-gradle-plugin:1.7.3'
         // https://github.com/ben-manes/gradle-versions-plugin
         // task: dependencyUpdates
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.42.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.46.0'
     }
 }
 
@@ -29,6 +29,7 @@ idea {
         downloadSources = true
     }
 }
+apply plugin: 'com.github.ben-manes.versions' // provides dependencyUpdates command
 
 ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
 
@@ -47,7 +48,7 @@ if (!hasProperty('mainClass')) {
 mainClassName = 'tf.helper.test.TestWebView'
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.15'
+version='1.16'
 description = 'Helper for all ThomasDaheim Java applications'
 
 repositories {
@@ -68,8 +69,9 @@ repositories {
 dependencies {
 //    def javafx_version='11.0.2'
 //    def javafx_version='14'
-    def javafx_version='15.0.1'
+//    def javafx_version='15.0.1'
 //    def javafx_version='17.0.1'
+    def javafx_version='19.0.2'
     implementation "org.openjfx:javafx-base:$javafx_version:$platform"
     implementation "org.openjfx:javafx-graphics:$javafx_version:$platform"
     implementation "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -78,16 +80,15 @@ dependencies {
     implementation "org.openjfx:javafx-web:$javafx_version:$platform"
     implementation "org.openjfx:javafx-media:$javafx_version:$platform"
 
-    implementation 'commons-io:commons-io:2.6'
-    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'commons-io:commons-io:2.11.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
 
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.0.1'
-    implementation group: 'com.thoughtworks.xstream', name: 'xstream', version: '1.4.14'
+    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.2'
    
     testImplementation "org.testfx:testfx-junit:4.0.+"
     testImplementation "org.testfx:testfx-core:4.0.+"
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
 }
 
 compileJava {
