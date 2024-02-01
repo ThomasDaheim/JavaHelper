@@ -71,7 +71,8 @@ dependencies {
 //    def javafx_version='14'
 //    def javafx_version='15.0.1'
 //    def javafx_version='17.0.1'
-    def javafx_version='19.0.2'
+//    def javafx_version='19.0.2'
+    def javafx_version='21.0.2'
     implementation "org.openjfx:javafx-base:$javafx_version:$platform"
     implementation "org.openjfx:javafx-graphics:$javafx_version:$platform"
     implementation "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -180,9 +181,8 @@ jar {
     }
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+java {
+    withSourcesJar()
 }
 
 artifacts {
