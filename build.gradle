@@ -10,7 +10,7 @@ buildscript {
         classpath 'com.google.gradle:osdetector-gradle-plugin:1.7.3'
         // https://github.com/ben-manes/gradle-versions-plugin
         // task: dependencyUpdates
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.46.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.51.0'
     }
 }
 
@@ -81,15 +81,16 @@ dependencies {
     implementation "org.openjfx:javafx-web:$javafx_version:$platform"
     implementation "org.openjfx:javafx-media:$javafx_version:$platform"
 
-    implementation 'commons-io:commons-io:2.11.0'
-    implementation 'org.apache.commons:commons-lang3:3.12.0'
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.15'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.16.1'
+    implementation 'commons-io:commons-io:2.15.1'
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
 
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.2'
+    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.0'
    
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
     testImplementation "org.testfx:testfx-junit:4.0.+"
     testImplementation "org.testfx:testfx-core:4.0.+"
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.9.2'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
 }
 
 compileJava {
