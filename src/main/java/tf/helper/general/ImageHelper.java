@@ -74,6 +74,30 @@ public class ImageHelper {
         return toBufferedImage(img, BufferedImage.TYPE_INT_RGB);
     }
     
+    // TFE, 20240224: converting base64 strings to buffered images
+    public static BufferedImage toBufferedImage(final String imageBase64) {
+        BufferedImage result = null;
+        
+        byte[] imageByte = null; 
+        try {
+            imageByte = Base64.decodeBase64(imageBase64);
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(ImageHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if (imageByte == null) {
+            return result;
+        }
+        
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            result = ImageIO.read(bis);
+        } catch (IOException | NullPointerException | IllegalArgumentException ex) {
+            Logger.getLogger(ImageHelper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return result;
+    }
+    
     public static String compressBase64Image(final String imageBase64, final String imageType, int scaleWidth, int scaleHeight) {
         String result = imageBase64;
 
