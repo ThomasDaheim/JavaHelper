@@ -47,7 +47,7 @@ import javafx.scene.layout.Region;
 public class DragResizer {
     /**
      * The margin around the control that a user can click in to start resizing
-     * the region.
+ the listenRegion.
      */
     private static final int RESIZE_MARGIN = 5;
     
@@ -75,7 +75,8 @@ public class DragResizer {
         }
     }
 
-    private final Region region;
+    private final Region listenRegion;
+    private final Region resizeRegion;
     private final ResizeArea area;
 
     // in which area is the mouse cursor in?
@@ -89,31 +90,32 @@ public class DragResizer {
     
     private boolean dragging;
     
-    private DragResizer(final Region aRegion, final ResizeArea anArea) {
-        region = aRegion;
+    private DragResizer(final Region lRegion, final Region rRegion, final ResizeArea anArea) {
+        listenRegion = lRegion;
+        resizeRegion = rRegion;
         area = anArea;
     }
 
-    public static void makeResizable(final Region region, final ResizeArea area) {
-        final DragResizer resizer = new DragResizer(region, area);
+    public static void makeResizable(final Region lRegion, final Region rRegion, final ResizeArea anArea) {
+        final DragResizer resizer = new DragResizer(lRegion, rRegion, anArea);
         
-        region.setOnMousePressed((MouseEvent event) -> {
+        lRegion.setOnMousePressed((MouseEvent event) -> {
             resizer.mousePressed(event);
         });
-        region.setOnMouseDragged((MouseEvent event) -> {
+        lRegion.setOnMouseDragged((MouseEvent event) -> {
             resizer.mouseDragged(event);
         });
-        region.setOnMouseMoved((MouseEvent event) -> {
+        lRegion.setOnMouseMoved((MouseEvent event) -> {
             resizer.mouseOver(event);
         });
-        region.setOnMouseReleased((MouseEvent event) -> {
+        lRegion.setOnMouseReleased((MouseEvent event) -> {
             resizer.mouseReleased(event);
         });
     }
 
     protected void mouseReleased(MouseEvent event) {
         dragging = false;
-        region.setCursor(Cursor.DEFAULT);
+        listenRegion.setCursor(Cursor.DEFAULT);
     }
 
     protected void mouseOver(MouseEvent event) {
@@ -121,31 +123,31 @@ public class DragResizer {
 //            System.out.println("inBottom: " + inBottom + ", " + "inTop: " + inTop + ", " + "inLeft: " + inLeft + ", " + "inRight: " + inRight);
             // cursor change is only visible of set to NONE on any overlapping childs
             if (inBottom && inLeft) {
-                region.setCursor(Cursor.NE_RESIZE);
+                listenRegion.setCursor(Cursor.NE_RESIZE);
             } else if (inBottom && inRight) {
-                region.setCursor(Cursor.NW_RESIZE);
+                listenRegion.setCursor(Cursor.NW_RESIZE);
             } else if (inTop && inLeft) {
-                region.setCursor(Cursor.SE_RESIZE);
+                listenRegion.setCursor(Cursor.SE_RESIZE);
             } else if (inTop && inRight) {
-                region.setCursor(Cursor.SW_RESIZE);
+                listenRegion.setCursor(Cursor.SW_RESIZE);
             } else {
                 if (inBottom || inTop) {
-                    region.setCursor(Cursor.V_RESIZE);
+                    listenRegion.setCursor(Cursor.V_RESIZE);
                 } else {
-                    region.setCursor(Cursor.W_RESIZE);
+                    listenRegion.setCursor(Cursor.W_RESIZE);
                 }
             }
         }
         else {
-            region.setCursor(Cursor.DEFAULT);
+            listenRegion.setCursor(Cursor.DEFAULT);
         }
     }
 
     protected boolean isInDraggableZone(MouseEvent event) {
         // test for all combinations of top, bottom, left, right
-        inBottom = event.getY() > (region.getHeight() - RESIZE_MARGIN);
+        inBottom = event.getY() > (listenRegion.getHeight() - RESIZE_MARGIN);
         inTop = event.getY() < RESIZE_MARGIN;
-        inRight = event.getX() > (region.getWidth()- RESIZE_MARGIN);
+        inRight = event.getX() > (listenRegion.getWidth()- RESIZE_MARGIN);
         inLeft = event.getX() < RESIZE_MARGIN;
         
         return (inBottom && area.listenBottom()) ||
@@ -161,7 +163,7 @@ public class DragResizer {
         
         if ((inLeft && area.listenLeft()) || (inRight && area.listenRight())) {
             double mousex = event.getX();
-            double newWidth = region.getPrefWidth();
+            double newWidth = resizeRegion.getPrefWidth();
             if (inLeft) {
                 newWidth -= (mousex - startX);
             } else {
@@ -170,12 +172,12 @@ public class DragResizer {
                 startX = mousex;
             }
 //            System.out.println("mousex: " + mousex + ", " + "x: " + startX + ", " + "newWidth: " + newWidth);
-            region.setPrefWidth(newWidth);
+            resizeRegion.setPrefWidth(newWidth);
         }
 
         if ((inBottom && area.listenBottom()) || (inTop && area.listenTop())) {
             double mousey = event.getY();
-            double newHeight = region.getPrefHeight();
+            double newHeight = resizeRegion.getPrefHeight();
             if (inBottom) {
                 newHeight += (mousey - startY);
                 // bottom: startY is max value - we need to recalc difference to previous
@@ -184,7 +186,7 @@ public class DragResizer {
                 newHeight -= (mousey - startY);
             }
 //            System.out.println("mousey: " + mousey + ", " + "y: " + startY + ", " + "newHeight: " + newHeight);
-            region.setPrefHeight(newHeight);
+            resizeRegion.setPrefHeight(newHeight);
         }
     }
 

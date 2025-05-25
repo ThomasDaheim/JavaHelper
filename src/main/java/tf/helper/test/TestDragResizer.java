@@ -32,7 +32,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -63,38 +66,64 @@ public class TestDragResizer extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Test DragResizer by dragging the stackpane in all directions");
         
-        final StackPane pane = new StackPane();
-        pane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+        final Pane pane = new Pane();
+        pane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        pane.setLayoutX(200);
+        pane.setLayoutY(200);
         
         final StackPane stackPane = new StackPane();
-        stackPane.setMinHeight(400);
-        stackPane.setMaxHeight(400);
-        stackPane.setPrefHeight(400);
-        stackPane.setMinWidth(400);
-        stackPane.setMaxWidth(400);
+        stackPane.setPrefHeight(350);
         stackPane.setPrefWidth(400);
-        stackPane.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        stackPane.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
         
-        final VBox vbox = new VBox();
-        final Label widthLbl = new Label(WIDTH + "400");
+        final VBox vbox1 = new VBox();
+        final Label widthLbl1 = new Label(WIDTH + stackPane.getPrefWidth());
         stackPane.widthProperty().addListener((ov, t, t1) -> {
             if (t != null && t.intValue() > 0) {
-               widthLbl.setText(WIDTH + t.toString());
+               widthLbl1.setText(WIDTH + t.toString());
             }
         });
-        final Label heightLbl = new Label(HEIGHT + "400");
+        final Label heightLbl1 = new Label(HEIGHT + stackPane.getPrefHeight());
         stackPane.heightProperty().addListener((ov, t, t1) -> {
             if (t != null && t.intValue() > 0) {
-               heightLbl.setText(HEIGHT + t.toString());
+               heightLbl1.setText(HEIGHT + t.toString());
             }
         });
-        vbox.getChildren().addAll(widthLbl, heightLbl);
-        stackPane.getChildren().add(vbox);
-        StackPane.setAlignment(vbox, Pos.CENTER);
+        vbox1.getChildren().addAll(widthLbl1, heightLbl1);
+        stackPane.getChildren().add(vbox1);
+        StackPane.setAlignment(vbox1, Pos.CENTER);
         
-        DragResizer.makeResizable(stackPane, DragResizer.ResizeArea.ALL);
+        final HBox hBox = new HBox();
+        hBox.setPrefHeight(50);
+        hBox.setPrefWidth(400);
+        hBox.setBackground(new Background(new BackgroundFill(Color.GREEN, CornerRadii.EMPTY, Insets.EMPTY)));
+
+        final VBox vbox2 = new VBox();
+        final Label widthLbl2 = new Label(WIDTH + hBox.getPrefWidth());
+        hBox.widthProperty().addListener((ov, t, t1) -> {
+            if (t != null && t.intValue() > 0) {
+               widthLbl2.setText(WIDTH + t.toString());
+            }
+        });
+        final Label heightLbl2 = new Label(HEIGHT + hBox.getPrefHeight());
+        hBox.heightProperty().addListener((ov, t, t1) -> {
+            if (t != null && t.intValue() > 0) {
+               heightLbl2.setText(HEIGHT + t.toString());
+            }
+        });
+        vbox2.getChildren().addAll(widthLbl2, heightLbl2);
+        hBox.getChildren().add(vbox2);
         
-        pane.getChildren().add(stackPane);
+        final BorderPane borderPane = new BorderPane();
+        borderPane.setPrefHeight(400);
+        borderPane.setPrefWidth(400);
+        borderPane.setBackground(new Background(new BackgroundFill(Color.YELLOW, CornerRadii.EMPTY, Insets.EMPTY)));
+        borderPane.setCenter(stackPane);
+        borderPane.setTop(hBox);
+        
+        DragResizer.makeResizable(hBox, borderPane, DragResizer.ResizeArea.ALL);
+        
+        pane.getChildren().add(borderPane);
         
         primaryStage.setScene(new Scene(pane, 800, 800));
         primaryStage.initStyle(StageStyle.DECORATED);
