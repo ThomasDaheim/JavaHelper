@@ -48,7 +48,7 @@ if (!hasProperty('mainClass')) {
 mainClassName = 'tf.helper.test.TestWebView'
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.16'
+version='1.17'
 description = 'Helper for all ThomasDaheim Java applications'
 
 repositories {
