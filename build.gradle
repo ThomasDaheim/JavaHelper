@@ -10,7 +10,7 @@ buildscript {
         classpath 'com.google.gradle:osdetector-gradle-plugin:1.7.3'
         // https://github.com/ben-manes/gradle-versions-plugin
         // task: dependencyUpdates
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.51.0'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.52.0'
     }
 }
 
@@ -71,8 +71,9 @@ dependencies {
 //    def javafx_version='14'
 //    def javafx_version='15.0.1'
 //    def javafx_version='17.0.1'
-    def javafx_version='19.0.2'
+//    def javafx_version='19.0.2'
 //    def javafx_version='21.0.2'
+    def javafx_version='23.0.1'
     implementation "org.openjfx:javafx-base:$javafx_version:$platform"
     implementation "org.openjfx:javafx-graphics:$javafx_version:$platform"
     implementation "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -81,13 +82,13 @@ dependencies {
     implementation "org.openjfx:javafx-web:$javafx_version:$platform"
     implementation "org.openjfx:javafx-media:$javafx_version:$platform"
 
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.16.1'
-    implementation 'commons-io:commons-io:2.15.1'
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.18.0'
+    implementation 'commons-io:commons-io:2.19.0'
+    implementation 'org.apache.commons:commons-lang3:3.17.0'
 
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.0'
+    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.2'
    
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.25.3'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '4.0.0-M1'
     testImplementation "org.testfx:testfx-junit:4.0.+"
     testImplementation "org.testfx:testfx-core:4.0.+"
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
