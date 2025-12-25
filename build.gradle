@@ -3,7 +3,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-          url "https://plugins.gradle.org/m2/"
+          url = 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
@@ -76,16 +76,16 @@ dependencies {
     implementation "org.openjfx:javafx-web:$javafx_version:$platform"
     implementation "org.openjfx:javafx-media:$javafx_version:$platform"
 
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.18.0'
+    implementation 'commons-codec:commons-codec:1.18.0'
     implementation 'commons-io:commons-io:2.19.0'
     implementation 'org.apache.commons:commons-lang3:3.17.0'
 
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.2'
+    implementation 'org.controlsfx:controlsfx:11.2.2'
    
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '4.0.0-M1'
+    testImplementation 'org.assertj:assertj-core:4.0.0-M1'
     testImplementation "org.testfx:testfx-junit:4.0.+"
     testImplementation "org.testfx:testfx-core:4.0.+"
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
 }
 
 compileJava {
@@ -149,7 +149,7 @@ test {
     }
 
     // https://stackoverflow.com/a/35467005
-    testLogging.showStandardStreams true;   
+    testLogging.showStandardStreams = true;   
 }
 
 // extend Netbeans Gradle "Debug" task
