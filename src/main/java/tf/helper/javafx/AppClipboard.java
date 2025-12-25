@@ -264,11 +264,6 @@ public class AppClipboard implements TKClipboard {
     }
 
     @Override
-    public void setSecurityContext(final AccessControlContext ctx) {
-        // ctx not needed
-    }
-    
-    @Override
     public Set<TransferMode> getTransferModes() {
         throw new IllegalStateException();
     }
