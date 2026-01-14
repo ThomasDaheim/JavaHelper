@@ -76,11 +76,11 @@ dependencies {
     implementation "org.openjfx:javafx-web:$javafx_version:$platform"
     implementation "org.openjfx:javafx-media:$javafx_version:$platform"
 
-    implementation 'commons-codec:commons-codec:1.18.0'
-    implementation 'commons-io:commons-io:2.19.0'
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'commons-codec:commons-codec:1.20.0'
+    implementation 'commons-io:commons-io:2.21.0'
+    implementation 'org.apache.commons:commons-lang3:3.20.0'
 
-    implementation 'org.controlsfx:controlsfx:11.2.2'
+    implementation 'org.controlsfx:controlsfx:11.2.3'
    
     testImplementation 'org.assertj:assertj-core:4.0.0-M1'
     testImplementation "org.testfx:testfx-junit:4.0.+"
