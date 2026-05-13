@@ -9,8 +9,8 @@ import javafx.application.Platform;
 import javafx.stage.Screen;
 
 /**
- * Convert for transformation betwen various units.
- * To be extended as required. Or to use existing implementation of other converters, e.g. javax.measure.
+ * Convert for transformation between various units.
+ * To be extended as required. Or to use existing implementation of other converters, e.g. javafx.measure.
  * 
  * @author thomas
  */
