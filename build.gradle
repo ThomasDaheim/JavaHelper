@@ -41,7 +41,7 @@ application {
 }
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.17'
+version='1.18'
 description = 'Helper for all ThomasDaheim Java applications'
 
 repositories {
