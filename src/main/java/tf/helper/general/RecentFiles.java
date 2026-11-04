@@ -43,14 +43,26 @@ public class RecentFiles {
     
     private IPreferencesStore myPreferences = null;
     private RecentList<String> recentFiles = null;
+    // entries are directories (e.g. recently opened folders) instead of files
+    private boolean directories = false;
 
     private RecentFiles() {
     }
 
     public RecentFiles(final IPreferencesStore preferences, final int maxLength) {
+        this(preferences, maxLength, false);
+    }
+
+    /**
+     * @param preferences where the list is stored
+     * @param maxLength maximum number of entries
+     * @param directories true: the entries are directories (e.g. recently opened folders), false: files
+     */
+    public RecentFiles(final IPreferencesStore preferences, final int maxLength, final boolean directories) {
         myPreferences = preferences;
         recentFiles = new RecentList<>(maxLength);
-        
+        this.directories = directories;
+
         loadAndCheckRecentFiles();
     }
 
@@ -120,8 +132,11 @@ public class RecentFiles {
         boolean result = false;
         
         final File f = new File(filename);
-        // needs to be one existing file that can be read & written
-        if(f.exists() && !f.isDirectory() && f.canRead() && f.canWrite()) { 
+        if (directories) {
+            // needs to be one existing directory that can be read
+            result = f.isDirectory() && f.canRead();
+        } else if(f.exists() && !f.isDirectory() && f.canRead() && f.canWrite()) {
+            // needs to be one existing file that can be read & written
             result = true;
         }
         
