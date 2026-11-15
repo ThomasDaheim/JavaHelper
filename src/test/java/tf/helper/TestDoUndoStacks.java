@@ -296,7 +296,8 @@ public class TestDoUndoStacks {
 
         // test improper keys in various combinations
         Assert.assertFalse(DoUndoManager.getInstance().canDo());
-        Assert.assertFalse(DoUndoManager.getInstance().canDo(null));
+        // TFE, 20261115: canDo(null) removed - javac passes null as the whole array there (warning "non-varargs call
+        // of varargs method"), that's the same as the explicit (String[]) null below
         Assert.assertFalse(DoUndoManager.getInstance().canDo((String) null));
         Assert.assertFalse(DoUndoManager.getInstance().canDo((String[]) null));
         final String[] strArray1 = {"A","B"}; 
