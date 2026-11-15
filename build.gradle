@@ -3,7 +3,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-          url "https://plugins.gradle.org/m2/"
+          url = 'https://plugins.gradle.org/m2/'
         }
     }
     dependencies {
@@ -35,20 +35,13 @@ ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'wi
 
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-// NetBeans will automatically add "run" and "debug" tasks relying on the
-// "mainClass" property. You may however define the property prior executing
-// tasks by passing a "-PmainClass=<QUALIFIED_CLASS_NAME>" argument.
-//
-// Note however, that you may define your own "run" and "debug" task if you
-// prefer. In this case NetBeans will not add these tasks but you may rely on
-// your own implementation.
-if (!hasProperty('mainClass')) {
-    ext.mainClass = 'tf.helper.test.TestWebView'
+// TFE, 20251224: Updates for Java25 and Gradle 9
+application {
+    mainClass.set('tf.helper.test.TestWebView')
 }
-mainClassName = 'tf.helper.test.TestWebView'
 def appName='JavaHelper'
 group='tf.JavaHelper'
-version='1.16'
+version='1.17'
 description = 'Helper for all ThomasDaheim Java applications'
 
 repositories {
@@ -73,7 +66,8 @@ dependencies {
 //    def javafx_version='17.0.1'
 //    def javafx_version='19.0.2'
 //    def javafx_version='21.0.2'
-    def javafx_version='23.0.1'
+//    def javafx_version='23.0.1'
+    def javafx_version='25.0.1'
     implementation "org.openjfx:javafx-base:$javafx_version:$platform"
     implementation "org.openjfx:javafx-graphics:$javafx_version:$platform"
     implementation "org.openjfx:javafx-controls:$javafx_version:$platform"
@@ -82,16 +76,16 @@ dependencies {
     implementation "org.openjfx:javafx-web:$javafx_version:$platform"
     implementation "org.openjfx:javafx-media:$javafx_version:$platform"
 
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.18.0'
-    implementation 'commons-io:commons-io:2.19.0'
-    implementation 'org.apache.commons:commons-lang3:3.17.0'
+    implementation 'commons-codec:commons-codec:1.20.0'
+    implementation 'commons-io:commons-io:2.21.0'
+    implementation 'org.apache.commons:commons-lang3:3.20.0'
 
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.2'
+    implementation 'org.controlsfx:controlsfx:11.2.3'
    
-    testImplementation group: 'org.assertj', name: 'assertj-core', version: '4.0.0-M1'
+    testImplementation 'org.assertj:assertj-core:4.0.0-M1'
     testImplementation "org.testfx:testfx-junit:4.0.+"
     testImplementation "org.testfx:testfx-core:4.0.+"
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
 }
 
 compileJava {
@@ -129,6 +123,10 @@ def newArgs = [ '--add-modules', 'javafx.controls,javafx.graphics,javafx.base,ja
                 '--add-exports', 'javafx.media/com.sun.media.jfxmedia=ALL-UNNAMED',
                 '--add-exports', 'javafx.media/com.sun.media.jfxmedia.events=ALL-UNNAMED',
                 '--add-opens', 'javafx.graphics/javafx.scene.layout=ALL-UNNAMED',
+                // TFE, 20251224: Updates for Java25 and Gradle 9
+                '--enable-native-access', 'javafx.graphics',
+                '--enable-native-access', 'javafx.web',
+                '--enable-native-access', 'javafx.media',
     ]
     
 // extend Netbeans Gradle "Run" task
@@ -151,7 +149,7 @@ test {
     }
 
     // https://stackoverflow.com/a/35467005
-    testLogging.showStandardStreams true;   
+    testLogging.showStandardStreams = true;   
 }
 
 // extend Netbeans Gradle "Debug" task

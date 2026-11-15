@@ -72,7 +72,15 @@ public class ColorConverter {
             return (doubleToHex(color.getRed()) + doubleToHex(color.getGreen()) + doubleToHex(color.getBlue()) + doubleToHex(color.getOpacity())).toUpperCase();
         }
     }
-    
+
+    // TFE, 20261102: packed int as used by PixelWriter.setArgb / IntBuffer pixel formats - alpha in the highest byte
+    public static int JavaFXtoARGB(final Color color) {
+        return ((int) Math.round(color.getOpacity() * 255) << 24) |
+                ((int) Math.round(color.getRed() * 255) << 16) |
+                ((int) Math.round(color.getGreen() * 255) << 8) |
+                (int) Math.round(color.getBlue() * 255);
+    }
+
     // TFE, 2021012: lets do the other way too
     public static Color KMLToJavaFX(final String color) {
         String inColor = color;

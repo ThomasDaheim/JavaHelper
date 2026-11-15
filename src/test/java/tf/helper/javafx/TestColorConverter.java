@@ -103,6 +103,17 @@ public class TestColorConverter {
         isEqualColor(testColor2, ColorConverter.KMLToJavaFX(ColorConverter.JavaFXtoKML(testColor2a, 1.0)));
     }
     
+    @Test
+    public void testToARGB() {
+        Assert.assertEquals(0xFF8B008B, ColorConverter.JavaFXtoARGB(testColor1));
+        // 0.5 * 255 = 127.5 is rounded to 128 = 0x80 - same as in RGBHex & KML
+        Assert.assertEquals(0x808B008B, ColorConverter.JavaFXtoARGB(testColor1a));
+        Assert.assertEquals(0xFF7FFF00, ColorConverter.JavaFXtoARGB(testColor2));
+        Assert.assertEquals(0x807FFF00, ColorConverter.JavaFXtoARGB(testColor2a));
+        Assert.assertEquals(0x00000000, ColorConverter.JavaFXtoARGB(Color.TRANSPARENT));
+        Assert.assertEquals(0xFFFFFFFF, ColorConverter.JavaFXtoARGB(Color.WHITE));
+    }
+
     private static void isEqualColor(final Color col1, final Color col2) {
         Assert.assertEquals(col1.getRed(), col2.getRed(), 0.01);
         Assert.assertEquals(col1.getGreen(), col2.getGreen(), 0.01);
