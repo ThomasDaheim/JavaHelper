@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2014ff Thomas Feuster
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * 1. Redistributions of source code must retain the above copyright
@@ -11,7 +11,7 @@
  *    documentation and/or other materials provided with the distribution.
  * 3. The name of the author may not be used to endorse or promote products
  *    derived from this software without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -68,6 +68,7 @@ public interface ITypedPreference {
     /**
      * @param <T> type of the value
      * @return the stored value - the default if nothing is stored or the stored text can't be parsed
+     * @throws UnsupportedOperationException if the default can't be parsed either
      */
     default <T> T getAsType() {
         try {
@@ -80,6 +81,7 @@ public interface ITypedPreference {
     /**
      * @param <T> type of the value
      * @return the default value
+     * @throws UnsupportedOperationException if the default can't be parsed into the value class
      */
     default <T> T getDefaultAsType() {
         return ObjectsHelper.uncheckedCast(GeneralParser.parse(getDefaultValue(), ObjectsHelper.uncheckedCast(getValueClass())));
@@ -88,6 +90,7 @@ public interface ITypedPreference {
     /**
      * @param <T> type of the value
      * @param value value to store - an enum is stored by its name, so that a toString() for display doesn't matter
+     * @throws NullPointerException if value is null
      */
     default <T> void put(final T value) {
         getStore().put(getKey(), value instanceof Enum<?> constant ? constant.name() : value.toString());
